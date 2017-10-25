@@ -13,6 +13,30 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/textView" />
+
+    <Button
+        android:id="@+id/findGame"
+        android:layout_width="169dp"
+        android:layout_height="53dp"
+        android:text="Find Game"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="122dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintVertical_bias="0.517"
+        android:layout_marginLeft="96dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="167dp"
+        android:layout_height="58dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="214dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="@+id/findGame" />
 
 </android.support.constraint.ConstraintLayout>
