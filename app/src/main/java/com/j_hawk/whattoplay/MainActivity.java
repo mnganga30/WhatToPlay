@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.j_hawk.whattoplay.data.DBHelper;
-import com.j_hawk.whattoplay.services.AddToCollection;
 
 public class MainActivity extends AppCompatActivity {
     private DBHelper dbHelper;
@@ -23,8 +22,17 @@ public class MainActivity extends AppCompatActivity {
         statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
 
+        final Button button = (Button) findViewById(R.id.onlineBtn);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
+                // Code here executes on main thread after user presses button
+
+                startActivity(new  Intent(getApplicationContext(), AddToCollection.class));
+            }
+        });
     }
+
 
 
 }
