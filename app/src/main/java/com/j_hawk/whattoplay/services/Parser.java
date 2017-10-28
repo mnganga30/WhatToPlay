@@ -19,9 +19,8 @@ import static android.R.attr.name;
 public class Parser {
 
 
-    OnlineGame entry;
 
-    public class StackOverflowXmlParser {
+
         // We don't use namespaces
         private  final String ns = null;
 
@@ -48,7 +47,7 @@ public class Parser {
                 }
                 String name = parser.getName();
                 // Starts by looking for the entry tag
-                if (name.equals("entry")) {
+                if (name.equals("items")) {
                     entries.add(readEntry(parser));
                 } else {
                     skip(parser);
@@ -79,10 +78,9 @@ public class Parser {
             return new OnlineGame(id, gameName);
         }
 
-        // Processes title tags in the feed.
 
 
-        // Processes link tags in the feed.
+        // Processes link tags in the Id.
         private int readId(XmlPullParser parser) throws IOException, XmlPullParserException {
             int id = 0;
             parser.require(XmlPullParser.START_TAG, ns, "item");
@@ -98,7 +96,7 @@ public class Parser {
             return id;
         }
 
-        // Processes link tags in the feed.
+        // Processes link tags in the Game Name.
         private String readGameName(XmlPullParser parser) throws IOException, XmlPullParserException {
             String game = "";
             parser.require(XmlPullParser.START_TAG, ns, "name");
@@ -134,4 +132,4 @@ public class Parser {
 
     }
 
-}
+
