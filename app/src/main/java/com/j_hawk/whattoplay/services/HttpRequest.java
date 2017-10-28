@@ -23,7 +23,7 @@ public class HttpRequest {
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
             Parser searchParser = null;
-            
+
             searchParser.parse(in);
 
         } catch (MalformedURLException e) {
