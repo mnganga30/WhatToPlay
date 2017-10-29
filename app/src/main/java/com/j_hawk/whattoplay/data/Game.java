@@ -17,7 +17,7 @@ public class Game {
     private int year;
     private int playTime;
 
-    Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime) {
+    public Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime) {
         this.id = id;
         this.name = name;
         this.minPlayers = minPlayers;
