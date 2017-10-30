@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void goToRemoveGameActivity (View v) {
+        Intent intent = new Intent(getApplicationContext(), removeGameActivity.class);
+        startActivity(intent);
+    }
+
 
 
 }

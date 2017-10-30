@@ -1,7 +1,6 @@
 package com.j_hawk.whattoplay;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,20 +18,12 @@ import com.j_hawk.whattoplay.data.Game;
 import com.j_hawk.whattoplay.services.OnlineGame;
 import com.j_hawk.whattoplay.services.ParserGame;
 import com.j_hawk.whattoplay.services.ParserGameList;
-import com.j_hawk.whattoplay.services.ParserGameList;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -70,7 +60,7 @@ public class AddToCollection extends AppCompatActivity {
 //    }
 
     public void searchButtonClicked(View v) throws ExecutionException, InterruptedException {
-        final TextView findGameText = (TextView)findViewById(R.id.findGameTxt);
+        final TextView findGameText = (TextView)findViewById(R.id.removeGame);
         final ArrayList<OnlineGame> gameResults = new FindGamesByQuery().execute(findGameText.getText().toString()).get();
         final ArrayAdapter adapterTask = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gameResults);
         gameList.setAdapter(adapterTask);
@@ -111,7 +101,7 @@ public class AddToCollection extends AppCompatActivity {
         if (result != -1) {
             statusMessage.setText("Game Succesfully Added To Collection!");
         } else {
-            statusMessage.setText("ERROR: Game could not be added to collection");
+            statusMessage.setText("ERROR: Game is already in your collection");
         }
         statusMessage.show();
 //        ArrayList<Game> games = dbHelper.getAllGames();
