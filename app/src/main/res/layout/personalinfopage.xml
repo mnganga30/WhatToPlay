@@ -12,16 +12,34 @@
         app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
     <Button
-        android:id="@+id/checklist"
+        android:id="@+id/searchCollection"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:text="View My Games List" />
+        android:text="What To Play?" />
 
     <Button
-        android:id="@+id/removemode"
+        android:id="@+id/manageCollection"
         android:layout_width="match_parent"
         android:layout_height="63dp"
-        android:text="delete Your Games"
-        android:layout_weight="0.01" />
+        android:layout_weight="0.01"
+        android:text="Manage Collection" />
+
+    <Button
+        android:id="@+id/addMode"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Add To Collection" />
+
+    <Button
+        android:id="@+id/removeMode"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Remove From Collection" />
+
+    <Button
+        android:id="@+id/cancelManageCollection"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Cancel" />
 
 </LinearLayout>

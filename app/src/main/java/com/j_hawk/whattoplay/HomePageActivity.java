@@ -37,9 +37,27 @@ public class HomePageActivity extends AppCompatActivity {
 
 
     private PersonalInfoPagerAdapter myPersonalInfoPagerAdapter;
-    private SearchPagerAdapter mySearchPagerAdapter;
+    private static SearchPagerAdapter mySearchPagerAdapter;
     private HomePagerAdapter myHomePagerAdapter;
-    ViewPager mViewPager;
+    private ViewPager mViewPager;
+    private static String fragmentDisplayed;
+    private static final String SEARCH_FRAG = "SearchPage";
+    private static final String HOME_FRAG = "HomePage";
+    private static final String PERSONAL_FRAG = "PersonalPage";
+
+    @Override
+    public void onBackPressed()
+    {
+        if (fragmentDisplayed == null ) {
+            super.onBackPressed();
+        } else if  (fragmentDisplayed.equals(SEARCH_FRAG) || fragmentDisplayed.equals(HOME_FRAG)) {
+            mViewPager = (ViewPager) findViewById(R.id.pager);
+            mViewPager.setAdapter(myPersonalInfoPagerAdapter);
+            fragmentDisplayed = PERSONAL_FRAG;
+        } else if (fragmentDisplayed.equals(PERSONAL_FRAG)) {
+            super.onBackPressed();
+        }
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -47,17 +65,20 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
+                case R.id.navigation_notifications:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myHomePagerAdapter);
+                    fragmentDisplayed = HOME_FRAG;
                     return true;
                 case R.id.navigation_dashboard:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mySearchPagerAdapter);
+                    fragmentDisplayed = SEARCH_FRAG;
                      return true;
-                case R.id.navigation_notifications:
+                case R.id.navigation_home:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myPersonalInfoPagerAdapter);
+                    fragmentDisplayed = PERSONAL_FRAG;
                     return true;
             }
             return false;
@@ -70,14 +91,14 @@ public class HomePageActivity extends AppCompatActivity {
             setContentView(R.layout.activity_home_page);
             BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+            mySearchPagerAdapter =
+                    new SearchPagerAdapter(getSupportFragmentManager());
+            myPersonalInfoPagerAdapter =
+                    new PersonalInfoPagerAdapter(getSupportFragmentManager());
             myHomePagerAdapter =
                     new HomePagerAdapter(getSupportFragmentManager());
             mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter(myHomePagerAdapter);
-            mySearchPagerAdapter =
-                            new SearchPagerAdapter(getSupportFragmentManager());
-            myPersonalInfoPagerAdapter =
-                    new PersonalInfoPagerAdapter(getSupportFragmentManager());
+            mViewPager.setAdapter(myPersonalInfoPagerAdapter);
         }
 
 
@@ -109,15 +130,67 @@ public class HomePageActivity extends AppCompatActivity {
     public static class PersonalInfoFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
 
+        private Button manageCollection;
+        private Button searchCollection;
+        private Button removeMode;
+        private Button addMode;
+        private Button cancel;
+
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(
+            final View rootView = inflater.inflate(
                     R.layout.personalinfopage, container, false);
             ImageView background = (ImageView) rootView.findViewById(R.id.backgroundimg);
             background.setImageResource(R.drawable.background);
-            Button removeMode = (Button) rootView.findViewById(R.id.removemode);
-            Button checkinglist = (Button) rootView.findViewById(R.id.checklist);
+            manageCollection = (Button) rootView.findViewById(R.id.manageCollection);
+            searchCollection = (Button) rootView.findViewById(R.id.searchCollection);
+            addMode = (Button) rootView.findViewById(R.id.addMode);
+            removeMode = (Button) rootView.findViewById(R.id.removeMode);
+            cancel = (Button) rootView.findViewById(R.id.cancelManageCollection);
+            removeMode.setVisibility(View.GONE);
+            addMode.setVisibility(View.GONE);
+            cancel.setVisibility(View.GONE);
+
+            manageCollection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    manageCollection.setVisibility(View.GONE);
+                    searchCollection.setVisibility(View.GONE);
+                    addMode.setVisibility(View.VISIBLE);
+                    removeMode.setVisibility(View.VISIBLE);
+                    cancel.setVisibility(View.VISIBLE);
+                }
+            });
+
+            searchCollection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ViewPager vp = (ViewPager) getActivity().findViewById(R.id.pager);
+                    vp.setAdapter(mySearchPagerAdapter);
+                    fragmentDisplayed = SEARCH_FRAG;
+                }
+            });
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    manageCollection.setVisibility(View.VISIBLE);
+                    searchCollection.setVisibility(View.VISIBLE);
+                    addMode.setVisibility(View.GONE);
+                    removeMode.setVisibility(View.GONE);
+                    cancel.setVisibility(View.GONE);
+                }
+            });
+
+            addMode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), AddToCollection.class);
+                    startActivity(intent);
+                }
+            });
+
             removeMode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -126,13 +199,6 @@ public class HomePageActivity extends AppCompatActivity {
                 }
             });
 
-            checkinglist.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                }
-            });
             Bundle args = getArguments();
             return rootView;
         }
