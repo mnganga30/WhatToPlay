@@ -36,7 +36,7 @@ public final class GameDB {
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
-                _ID + " INTEGER PRIMARY KEY" +
+                _ID + " INTEGER PRIMARY KEY," +
                 COLUMN_NAME_GAME_NAME + " TEXT," +
                 COLUMN_NAME_MIN_PLAYERS + " INTEGER," +
                 COLUMN_NAME_MAX_PLAYERS + " INTEGER," +

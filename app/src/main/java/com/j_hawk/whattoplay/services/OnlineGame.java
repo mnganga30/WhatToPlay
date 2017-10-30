@@ -7,25 +7,35 @@ package com.j_hawk.whattoplay.services;
 public class OnlineGame {
 
     private String name;
-   private int id;
+    private int id;
+    private int year;
 
-    OnlineGame(int id, String name)
+    OnlineGame(int id, String name, int year)
     {
         this.id=id;
         this.name =name;
+        this.year = year;
     }
 
 
-    int getId()
+    public int getId()
     {
+
         return id;
     }
 
-    String getName()
+    public String getName()
     {
         return name;
 
     }
 
+    public int getYear() {
+        return year;
+    }
 
+    @Override
+    public String toString() {
+        return name + "\n" + year;
+    }
 }
