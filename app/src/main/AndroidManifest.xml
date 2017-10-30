@@ -19,9 +19,8 @@
         </activity>
 
         <activity android:name=".AddToCollection">
-
-
         </activity>
+        <activity android:name=".removeGameActivity"></activity>
     </application>
 
 </manifest>

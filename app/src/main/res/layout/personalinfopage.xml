@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/backgroundimg"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/checklist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View My Game Lists" />
+        android:layout_height="66dp"
+        android:text="View My Games List" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/removemode"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="63dp"
+        android:text="delete Your Games"
+        android:layout_weight="0.01" />
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
 </LinearLayout>

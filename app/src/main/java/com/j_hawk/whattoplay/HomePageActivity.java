@@ -1,13 +1,12 @@
 package com.j_hawk.whattoplay;
 
+
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.j_hawk.whattoplay.data.Game;
@@ -27,12 +30,15 @@ import com.j_hawk.whattoplay.data.Game;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_CLASS_TEXT;
+
 public class HomePageActivity extends AppCompatActivity {
 
 
-    PersonalInfoPagerAdapter myPersonalInfoPagerAdapter;
-    SearchPagerAdapter mySearchPagerAdapter;
-    HomePagerAdapter myHomePagerAdapter;
+    private PersonalInfoPagerAdapter myPersonalInfoPagerAdapter;
+    private SearchPagerAdapter mySearchPagerAdapter;
+    private HomePagerAdapter myHomePagerAdapter;
     ViewPager mViewPager;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -42,27 +48,20 @@ public class HomePageActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    myHomePagerAdapter =
-                            new HomePagerAdapter(getSupportFragmentManager());
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myHomePagerAdapter);
                     return true;
                 case R.id.navigation_dashboard:
-                    mySearchPagerAdapter =
-                            new SearchPagerAdapter(getSupportFragmentManager());
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mySearchPagerAdapter);
-                    return true;
+                     return true;
                 case R.id.navigation_notifications:
-                    myPersonalInfoPagerAdapter =
-                            new PersonalInfoPagerAdapter(getSupportFragmentManager());
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myPersonalInfoPagerAdapter);
                     return true;
             }
             return false;
         }
-
     };
 
         @Override
@@ -75,6 +74,10 @@ public class HomePageActivity extends AppCompatActivity {
                     new HomePagerAdapter(getSupportFragmentManager());
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(myHomePagerAdapter);
+            mySearchPagerAdapter =
+                            new SearchPagerAdapter(getSupportFragmentManager());
+            myPersonalInfoPagerAdapter =
+                    new PersonalInfoPagerAdapter(getSupportFragmentManager());
         }
 
 
@@ -109,10 +112,27 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
-            // The last two arguments ensure LayoutParams are inflated
-            // properly.
             View rootView = inflater.inflate(
                     R.layout.personalinfopage, container, false);
+            ImageView background = (ImageView) rootView.findViewById(R.id.backgroundimg);
+            background.setImageResource(R.drawable.background);
+            Button removeMode = (Button) rootView.findViewById(R.id.removemode);
+            Button checkinglist = (Button) rootView.findViewById(R.id.checklist);
+            removeMode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(getContext(),removeGameActivity.class);
+                    startActivity(mIntent);
+                }
+            });
+
+            checkinglist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                }
+            });
             Bundle args = getArguments();
             return rootView;
         }
@@ -155,16 +175,46 @@ public class HomePageActivity extends AppCompatActivity {
             View rootView = inflater.inflate(
                     R.layout.searchpage, container, false);
             ImageButton search = (ImageButton) rootView.findViewById(R.id.searchbutton);
-            Game first = new Game(10,"hahah",1,5,2010,5);
-            Game second = new Game(10,"hahah",1,5,2010,5);
-            Game third = new Game(10,"hahah",1,5,2010,5);
-            Game forth = new Game(10,"hahah",1,5,2010,5);
-            Game fifth = new Game(10,"hahah",1,5,2010,5);
-            Game sixth = new Game(10,"hahah",1,5,2010,5);
-            Game seventh = new Game(10,"hahah",1,5,2010,5);
-            Game eighth = new Game(10,"hahah",1,5,2010,5);
-            Game ninth = new Game(10,"hahah",1,5,2010,5);
-            Game tenth = new Game(10,"hahah",1,5,2010,5);
+            final EditText input = (EditText) rootView.findViewById(R.id.editText);
+
+            Spinner spinner = (Spinner) rootView.findViewById(R.id.searchmode);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                    R.array.mode, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    // Two different modes
+
+                    //search by name
+                    if(position == 0){
+                        input.setText("");
+                        input.setInputType(TYPE_CLASS_TEXT);
+                    }
+                    //search by number of players
+                    if(position == 1){
+                        input.setText("");
+                        input.setInputType(TYPE_CLASS_NUMBER);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            //can be delete, cause they just used for testing...........................
+            Game first = new Game(10,"Demo1",1,5,2010,5);
+            Game second = new Game(10,"Demo2",1,5,2010,5);
+            Game third = new Game(10,"used for testing",1,5,2010,5);
+            Game forth = new Game(10,"used for testing",1,5,2010,5);
+            Game fifth = new Game(10,"used for testing",1,5,2010,5);
+            Game sixth = new Game(10,"used for testing",1,5,2010,5);
+            Game seventh = new Game(10,"used for testing",1,5,2010,5);
+            Game eighth = new Game(10,"used for testing",1,5,2010,5);
+            Game ninth = new Game(10,"used for testing",1,5,2010,5);
+            Game tenth = new Game(10,"used for testing",1,5,2010,5);
             list.add(first);
             list.add(second);
             list.add(third);
@@ -175,7 +225,14 @@ public class HomePageActivity extends AppCompatActivity {
             list.add(eighth);
             list.add(ninth);
             list.add(tenth);
+            //............................................................................
             msItemAdapter = new ItemAdapter(inflater,list);
+            search.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lySearch.setAdapter(msItemAdapter);
+                }
+            });
             lySearch = (ListView) rootView.findViewById(R.id.searchingresult);
             Bundle args = getArguments();
             return rootView;
@@ -183,7 +240,6 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            lySearch.setAdapter(msItemAdapter);
             lySearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -229,21 +285,19 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
-            // The last two arguments ensure LayoutParams are inflated
-            // properly.
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            Game first = new Game(10,"hahah",1,5,2010,5);
-            Game second = new Game(10,"hahah",1,5,2010,5);
-            Game third = new Game(10,"hahah",1,5,2010,5);
-            Game forth = new Game(10,"hahah",1,5,2010,5);
-            Game fifth = new Game(10,"hahah",1,5,2010,5);
-            Game sixth = new Game(10,"hahah",1,5,2010,5);
-            Game seventh = new Game(10,"hahah",1,5,2010,5);
-            Game eighth = new Game(10,"hahah",1,5,2010,5);
-            Game ninth = new Game(10,"hahah",1,5,2010,5);
-            Game tenth = new Game(10,"hahah",1,5,2010,5);
+            Game first = new Game(10,"Game Name",1,5,2010,5);
+            Game second = new Game(10,"used for testing",1,5,2010,5);
+            Game third = new Game(10,"used for testing",1,5,2010,5);
+            Game forth = new Game(10,"used for testing",1,5,2010,5);
+            Game fifth = new Game(10,"used for testing",1,5,2010,5);
+            Game sixth = new Game(10,"used for testing",1,5,2010,5);
+            Game seventh = new Game(10,"used for testing",1,5,2010,5);
+            Game eighth = new Game(10,"used for testing",1,5,2010,5);
+            Game ninth = new Game(10,"used for testing",1,5,2010,5);
+            Game tenth = new Game(10,"used for testing",1,5,2010,5);
             list.add(first);
             list.add(second);
             list.add(third);
@@ -309,11 +363,10 @@ public class HomePageActivity extends AppCompatActivity {
             TextView year = viewInformation.findViewById(R.id.year);
             ImageView image = viewInformation.findViewById(R.id.gamepic);
             title.setText(item.getName());
-            min.setText("Min"+Integer.toString(item.getMinPlayers()));
-            max.setText("Max"+Integer.toString(item.getMaxPlayers()));
-            year.setText(Integer.toString(item.getYear()));
-            time.setText(Integer.toString(item.getPlayTime()));
-
+            min.setText("Min Play: "+Integer.toString(item.getMinPlayers()));
+            max.setText("Max Play: "+Integer.toString(item.getMaxPlayers()));
+            year.setText("["+Integer.toString(item.getYear())+"]");
+            time.setText(Integer.toString(item.getPlayTime())+" mins");
             //image.setImageResource(item.getImageId());
             return viewInformation;
         }
