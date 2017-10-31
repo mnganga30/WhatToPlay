@@ -116,9 +116,12 @@ public class HomePageActivity extends AppCompatActivity {
                     R.layout.personalinfopage, container, false);
             ImageView background = (ImageView) rootView.findViewById(R.id.backgroundimg);
             background.setImageResource(R.drawable.background);
-            Button removeMode = (Button) rootView.findViewById(R.id.removemode);
-            Button checkinglist = (Button) rootView.findViewById(R.id.checklist);
-            removeMode.setOnClickListener(new View.OnClickListener() {
+            final Button mangecollection = (Button) rootView.findViewById(R.id.mangecollection);
+            final Button Findgame = (Button) rootView.findViewById(R.id.Findgame);
+            final Button add = (Button) rootView.findViewById(R.id.addgamebutton);
+            final Button remove = (Button) rootView.findViewById(R.id.removegamebutton);
+            final Button back = (Button) rootView.findViewById(R.id.back);
+            remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent mIntent = new Intent(getContext(),removeGameActivity.class);
@@ -126,7 +129,26 @@ public class HomePageActivity extends AppCompatActivity {
                 }
             });
 
-            checkinglist.setOnClickListener(new View.OnClickListener() {
+            mangecollection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    add.setVisibility(View.VISIBLE);
+                    remove.setVisibility(View.VISIBLE);
+                    back.setVisibility(View.VISIBLE);
+                    mangecollection.setVisibility(View.INVISIBLE);
+                    Findgame.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                }
+            });
+
+            Findgame.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
