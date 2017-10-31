@@ -41,22 +41,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@+id/listView"
-        android:layout_marginTop="84dp"
-        android:layout_marginRight="142dp"
+        android:layout_marginTop="171dp"
+        android:layout_marginRight="169dp"
         app:layout_constraintRight_toRightOf="@+id/listView" />
 
     <ListView
         android:id="@+id/listView"
-        android:layout_width="331dp"
-        android:layout_height="418dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="390dp"
+        android:layout_height="518dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.612"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBtn"
-        app:layout_constraintVertical_bias="0.111" />
+        app:layout_constraintTop_toBottomOf="@+id/searchBtn" />
 </android.support.constraint.ConstraintLayout>

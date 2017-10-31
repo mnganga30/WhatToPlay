@@ -2,6 +2,7 @@ package com.j_hawk.whattoplay;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +46,7 @@ public class HomePageActivity extends AppCompatActivity {
     private static final String SEARCH_FRAG = "SearchPage";
     private static final String HOME_FRAG = "HomePage";
     private static final String PERSONAL_FRAG = "PersonalPage";
+    private static BottomNavigationView navigation;
 
     @Override
     public void onBackPressed()
@@ -54,6 +57,7 @@ public class HomePageActivity extends AppCompatActivity {
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(myPersonalInfoPagerAdapter);
             fragmentDisplayed = PERSONAL_FRAG;
+            navigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
         } else if (fragmentDisplayed.equals(PERSONAL_FRAG)) {
             super.onBackPressed();
         }
@@ -65,20 +69,23 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_notifications:
+                case R.id.navigation_recommendations:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myHomePagerAdapter);
                     fragmentDisplayed = HOME_FRAG;
+                    navigation.getMenu().findItem(R.id.navigation_recommendations).setChecked(true);
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_search:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mySearchPagerAdapter);
                     fragmentDisplayed = SEARCH_FRAG;
+                    navigation.getMenu().findItem(R.id.navigation_search).setChecked(true);
                      return true;
                 case R.id.navigation_home:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myPersonalInfoPagerAdapter);
                     fragmentDisplayed = PERSONAL_FRAG;
+                    navigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
                     return true;
             }
             return false;
@@ -89,7 +96,7 @@ public class HomePageActivity extends AppCompatActivity {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_home_page);
-            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            navigation = (BottomNavigationView) findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
             mySearchPagerAdapter =
                     new SearchPagerAdapter(getSupportFragmentManager());
@@ -166,6 +173,7 @@ public class HomePageActivity extends AppCompatActivity {
             searchCollection.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    navigation.getMenu().findItem(R.id.navigation_search).setChecked(true);
                     ViewPager vp = (ViewPager) getActivity().findViewById(R.id.pager);
                     vp.setAdapter(mySearchPagerAdapter);
                     fragmentDisplayed = SEARCH_FRAG;
