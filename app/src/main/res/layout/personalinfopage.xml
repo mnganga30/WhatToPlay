@@ -12,39 +12,34 @@
         app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
     <Button
-        android:id="@+id/Findgame"
+        android:id="@+id/searchCollection"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:text="Find Games" />
+        android:text="What To Play?" />
 
     <Button
-        android:id="@+id/mangecollection"
+        android:id="@+id/manageCollection"
         android:layout_width="match_parent"
         android:layout_height="63dp"
         android:layout_weight="0.01"
-        android:text="Manage My Collection" />
+        android:text="Manage Collection" />
 
     <Button
-        android:id="@+id/addgamebutton"
-        android:layout_width="416dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.14"
-        android:text="add games"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/removegamebutton"
-        android:layout_width="416dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.19"
-        android:text="remove games"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/back"
+        android:id="@+id/addMode"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:visibility="invisible" />
+        android:layout_height="66dp"
+        android:text="Add To Collection" />
+
+    <Button
+        android:id="@+id/removeMode"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Remove From Collection" />
+
+    <Button
+        android:id="@+id/cancelManageCollection"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Cancel" />
 
 </LinearLayout>

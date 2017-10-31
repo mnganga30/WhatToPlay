@@ -2,6 +2,6 @@
     <string name="app_name">What To Play?</string>
     <string name="title_activity_home_page">What to Play?</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Search</string>
-    <string name="title_notifications">Me</string>
+    <string name="title_search">Search</string>
+    <string name="title_recommendations">Recommendations</string>
 </resources>

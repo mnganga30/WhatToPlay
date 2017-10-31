@@ -50,49 +50,45 @@ public class AddToCollection extends AppCompatActivity {
         gameList = (ListView)findViewById(R.id.listView);
     }
 
-//    public boolean addGameToCollection(int id) {
-//        Game gameToAdd = searchForGameByID(id);
-//        if(dbHelper.addGame(gameToAdd) != -1) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-
     public void searchButtonClicked(View v) throws ExecutionException, InterruptedException {
         final TextView findGameText = (TextView)findViewById(R.id.removeGame);
         final ArrayList<OnlineGame> gameResults = new FindGamesByQuery().execute(findGameText.getText().toString()).get();
-        final ArrayAdapter adapterTask = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gameResults);
-        gameList.setAdapter(adapterTask);
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final int index = i;
-                dialog.setTitle("Add "+ gameResults.get(i).getName()+" To Collection")
-                        .setMessage("Would you like to add " + gameResults.get(i).getName() + " to your collection?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                try {
-                                    addGameToCollection(gameResults.get(index).getId());
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+        if (gameResults == null) {
+            statusMessage.setText("ERROR: No Games were returned for that search result.");
+            statusMessage.show();
+        } else {
+            final ArrayAdapter adapterTask = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gameResults);
+            gameList.setAdapter(adapterTask);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            gameList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    final int index = i;
+                    dialog.setTitle("Add "+ gameResults.get(i).getName()+" To Collection")
+                            .setMessage("Would you like to add " + gameResults.get(i).getName() + " to your collection?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    try {
+                                        addGameToCollection(gameResults.get(index).getId());
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-                        //.setIcon(android.R.drawable.ic_dialog_alert);
-                final AlertDialog alertDialog = dialog.show();
-                if (!alertDialog.isShowing()) alertDialog.dismiss();
-            }
-        });
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            });
+                    //.setIcon(android.R.drawable.ic_dialog_alert);
+                    final AlertDialog alertDialog = dialog.show();
+                    if (!alertDialog.isShowing()) alertDialog.dismiss();
+                }
+            });
+        }
     }
 
     public void addGameToCollection(int id) throws ExecutionException, InterruptedException {
@@ -104,10 +100,6 @@ public class AddToCollection extends AppCompatActivity {
             statusMessage.setText("ERROR: Game is already in your collection");
         }
         statusMessage.show();
-//        ArrayList<Game> games = dbHelper.getAllGames();
-//        for (int i = 0; i < games.size(); i ++) {
-//            Log.i("test", games.get(i).getName());
-//        }
     }
 
     private class FindGamesByQuery extends AsyncTask<String, Void, ArrayList<OnlineGame>> {
@@ -123,18 +115,17 @@ public class AddToCollection extends AppCompatActivity {
         protected ArrayList<OnlineGame> doInBackground(String... params) {
             ArrayList<OnlineGame> gameResults;
             String urlString= "https://www.boardgamegeek.com/xmlapi2/search?type=boardgame&query=" + params[0];
-
+            Log.i("test", urlString);
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
+                Log.i("test", "" + urlConnection.getResponseCode());
                 try {
                     InputStream in = urlConnection.getInputStream();
                     ParserGameList parser = new ParserGameList();
                     List<OnlineGame> gameList = parser.parse(in);
                     gameResults = new ArrayList<>(gameList);
                     return gameResults;
-
                 } finally {
                     urlConnection.disconnect();
                 }
