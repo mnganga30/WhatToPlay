@@ -1,5 +1,6 @@
 package com.j_hawk.whattoplay.services;
 
+import android.util.Log;
 import android.util.Xml;
 
 import com.j_hawk.whattoplay.data.Game;
@@ -57,7 +58,7 @@ public class ParserGame {
 // to their respective "read" methods for processing. Otherwise, skips the tag.
     private Game readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "item");
-        String gameName = null;
+        String gameName = "";
         int minPlayers = 0;
         int maxPlayers = 0;
         int playTime = 0;
@@ -70,7 +71,7 @@ public class ParserGame {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("name") && parser.getAttributeValue(null, "value").equals("primary")) {
+            if (name.equals("name") && parser.getAttributeValue(null, "type").equals("primary")) {
                 gameName = readGameName(parser);
             } else if (name.equals("yearpublished")) {
                 yearPublished = readPublicationYear(parser);
@@ -78,6 +79,7 @@ public class ParserGame {
                 minPlayers = Integer.parseInt(parser.getAttributeValue(null, "value"));
             } else if (name.equals("maxplayers")) {
                 maxPlayers = Integer.parseInt(parser.getAttributeValue(null, "value"));
+                Log.i("new",parser.getAttributeValue(null, "value"));
             } else if (name.equals("playingtime")) {
                 playTime = Integer.parseInt(parser.getAttributeValue(null, "value"));
             } else if (name.equals("thumbnail")) {

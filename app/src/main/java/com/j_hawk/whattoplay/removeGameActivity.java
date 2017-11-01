@@ -3,6 +3,7 @@ package com.j_hawk.whattoplay;
 
 
         import android.media.Image;
+        import android.os.AsyncTask;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
         import android.util.Log;
@@ -19,10 +20,15 @@ package com.j_hawk.whattoplay;
 
         import com.j_hawk.whattoplay.data.DBHelper;
 
+        import java.io.InputStream;
+        import java.net.HttpURLConnection;
+        import java.net.URL;
         import java.util.ArrayList;
         import java.util.List;
+        import java.util.concurrent.ExecutionException;
 
         import com.j_hawk.whattoplay.data.Game;
+        import com.j_hawk.whattoplay.services.ParserGame;
 /**
  * Created by Jian on 10/25/17.
  */
@@ -43,39 +49,16 @@ public class removeGameActivity extends Activity{
         setContentView(R.layout.activity_remove_game);
         dbHelper = new DBHelper(getApplicationContext());
         statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-        List<Game> allGames;
-        //setupGameView();
-      //  allGames=dbHelper.getAllGames();
-        allGames = new ArrayList<Game>();
-        Game first = new Game(12,"jijiboom",1,5,2011,50, "");
-        Game second = new Game(213,"yang yiju",1,2,3,4, "");
-        allGames.add(first);
-        allGames.add(second);
+        ArrayList<Game> allGames = dbHelper.getAllGames();
+        for(int i = 0; i < allGames.size(); i++){
+            Log.i("abc",allGames.get(i).toString());
+        }
         viewGameList=(ListView) findViewById(R.id.gameList);
         LayoutInflater inflater = getLayoutInflater();
         gameAdapter mgameAdapter=new gameAdapter(inflater,allGames);
         viewGameList.setAdapter(mgameAdapter);
     }
-    private void setupGameView()
-    {
-//        Game first = new Game(12,"jijiboom",1,5,2011,50);
-//        allGames.add(first);
-//        viewGameList=(ListView) findViewById(R.id.gameList);
-//        LayoutInflater inflater = getLayoutInflater();
-//        gameAdapter mgameAdapter=new gameAdapter(inflater,allGames);
-//        viewGameList.setAdapter(mgameAdapter);
-//
-//        viewGameList.setOnItemClickListener(new AdapterView.OnClickListener()) {
-//
-//        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-//        {
-//
-//
-//
-//        }
-    //}
 
-    }
 
     class gameAdapter extends BaseAdapter {
         private List<Game> mitem;
@@ -111,7 +94,7 @@ public class removeGameActivity extends Activity{
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View viewInfromation = mInflater.inflate(R.layout.remove_game_item, null);
-            Game Item = mitem.get(i);
+            final Game Item = mitem.get(i);
             TextView name = viewInfromation.findViewById(R.id.gameToRemove);
             ImageButton delete = viewInfromation.findViewById(R.id.deletebutton);
             name.setText(Item.getName());
@@ -120,12 +103,14 @@ public class removeGameActivity extends Activity{
                 @Override
                     public void onClick(View view) {
                     int position = (int) view.getTag();
+                    dbHelper.removeGame(Item.getId());
                     mitem.remove(position);
                     notifyDataSetChanged();
                     }
                 });
             return viewInfromation;
         }
+
     }
 }
 
