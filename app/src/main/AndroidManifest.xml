@@ -21,6 +21,7 @@
         <activity android:name=".AddToCollection">
         </activity>
         <activity android:name=".removeGameActivity"></activity>
+        <activity android:name=".ImportCollection"></activity>
     </application>
 
 </manifest>

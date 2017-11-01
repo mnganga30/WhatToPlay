@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/importButton"
+            android:layout_width="284dp"
+            android:layout_height="62dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="28dp"
+            android:text="Import Collection From BBG"
+            app:layout_constraintLeft_toLeftOf="@+id/bggUserNameEdTxt"
+            app:layout_constraintRight_toRightOf="@+id/bggUserNameEdTxt"
+            app:layout_constraintTop_toBottomOf="@+id/bggUserNameEdTxt"
+            tools:layout_editor_absoluteX="19dp" />
+
+        <EditText
+            android:id="@+id/bggUserNameEdTxt"
+            android:layout_width="315dp"
+            android:layout_height="59dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="197dp"
+            android:hint="BoardGameGeek Username"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="51dp"
+            tools:layout_editor_absoluteY="180dp" />
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>

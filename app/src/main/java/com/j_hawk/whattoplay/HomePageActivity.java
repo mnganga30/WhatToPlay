@@ -2,7 +2,6 @@ package com.j_hawk.whattoplay;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -49,11 +48,10 @@ public class HomePageActivity extends AppCompatActivity {
     private static BottomNavigationView navigation;
 
     @Override
-    public void onBackPressed()
-    {
-        if (fragmentDisplayed == null ) {
+    public void onBackPressed() {
+        if (fragmentDisplayed == null) {
             super.onBackPressed();
-        } else if  (fragmentDisplayed.equals(SEARCH_FRAG) || fragmentDisplayed.equals(HOME_FRAG)) {
+        } else if (fragmentDisplayed.equals(SEARCH_FRAG) || fragmentDisplayed.equals(HOME_FRAG)) {
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(myPersonalInfoPagerAdapter);
             fragmentDisplayed = PERSONAL_FRAG;
@@ -73,40 +71,37 @@ public class HomePageActivity extends AppCompatActivity {
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myHomePagerAdapter);
                     fragmentDisplayed = HOME_FRAG;
-                    navigation.getMenu().findItem(R.id.navigation_recommendations).setChecked(true);
                     return true;
                 case R.id.navigation_search:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(mySearchPagerAdapter);
                     fragmentDisplayed = SEARCH_FRAG;
-                    navigation.getMenu().findItem(R.id.navigation_search).setChecked(true);
-                     return true;
+                    return true;
                 case R.id.navigation_home:
                     mViewPager = (ViewPager) findViewById(R.id.pager);
                     mViewPager.setAdapter(myPersonalInfoPagerAdapter);
                     fragmentDisplayed = PERSONAL_FRAG;
-                    navigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
                     return true;
             }
             return false;
         }
     };
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_home_page);
-            navigation = (BottomNavigationView) findViewById(R.id.navigation);
-            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-            mySearchPagerAdapter =
-                    new SearchPagerAdapter(getSupportFragmentManager());
-            myPersonalInfoPagerAdapter =
-                    new PersonalInfoPagerAdapter(getSupportFragmentManager());
-            myHomePagerAdapter =
-                    new HomePagerAdapter(getSupportFragmentManager());
-            mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter(myPersonalInfoPagerAdapter);
-        }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home_page);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mySearchPagerAdapter =
+                new SearchPagerAdapter(getSupportFragmentManager());
+        myPersonalInfoPagerAdapter =
+                new PersonalInfoPagerAdapter(getSupportFragmentManager());
+        myHomePagerAdapter =
+                new HomePagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(myPersonalInfoPagerAdapter);
+    }
 
 
     public class PersonalInfoPagerAdapter extends FragmentStatePagerAdapter {
@@ -142,6 +137,7 @@ public class HomePageActivity extends AppCompatActivity {
         private Button removeMode;
         private Button addMode;
         private Button cancel;
+        private Button importCollection;
 
         @Override
         public View onCreateView(LayoutInflater inflater,
@@ -155,9 +151,11 @@ public class HomePageActivity extends AppCompatActivity {
             addMode = (Button) rootView.findViewById(R.id.addMode);
             removeMode = (Button) rootView.findViewById(R.id.removeMode);
             cancel = (Button) rootView.findViewById(R.id.cancelManageCollection);
+            importCollection = (Button) rootView.findViewById(R.id.importCollectionBtn);
             removeMode.setVisibility(View.GONE);
             addMode.setVisibility(View.GONE);
             cancel.setVisibility(View.GONE);
+            importCollection.setVisibility(View.GONE);
 
             manageCollection.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -167,6 +165,7 @@ public class HomePageActivity extends AppCompatActivity {
                     addMode.setVisibility(View.VISIBLE);
                     removeMode.setVisibility(View.VISIBLE);
                     cancel.setVisibility(View.VISIBLE);
+                    importCollection.setVisibility(View.VISIBLE);
                 }
             });
 
@@ -188,6 +187,7 @@ public class HomePageActivity extends AppCompatActivity {
                     addMode.setVisibility(View.GONE);
                     removeMode.setVisibility(View.GONE);
                     cancel.setVisibility(View.GONE);
+                    importCollection.setVisibility(View.GONE);
                 }
             });
 
@@ -202,8 +202,16 @@ public class HomePageActivity extends AppCompatActivity {
             removeMode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent mIntent = new Intent(getContext(),removeGameActivity.class);
+                    Intent mIntent = new Intent(getContext(), removeGameActivity.class);
                     startActivity(mIntent);
+                }
+            });
+
+            importCollection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), ImportCollection.class);
+                    startActivity(intent);
                 }
             });
 
@@ -212,6 +220,7 @@ public class HomePageActivity extends AppCompatActivity {
         }
 
     }
+
     public class SearchPagerAdapter extends FragmentStatePagerAdapter {
         public SearchPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -256,18 +265,18 @@ public class HomePageActivity extends AppCompatActivity {
                     R.array.mode, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     // Two different modes
 
                     //search by name
-                    if(position == 0){
+                    if (position == 0) {
                         input.setText("");
                         input.setInputType(TYPE_CLASS_TEXT);
                     }
                     //search by number of players
-                    if(position == 1){
+                    if (position == 1) {
                         input.setText("");
                         input.setInputType(TYPE_CLASS_NUMBER);
                     }
@@ -279,16 +288,16 @@ public class HomePageActivity extends AppCompatActivity {
                 }
             });
             //can be delete, cause they just used for testing...........................
-            Game first = new Game(10,"Demo1",1,5,2010,5);
-            Game second = new Game(10,"Demo2",1,5,2010,5);
-            Game third = new Game(10,"used for testing",1,5,2010,5);
-            Game forth = new Game(10,"used for testing",1,5,2010,5);
-            Game fifth = new Game(10,"used for testing",1,5,2010,5);
-            Game sixth = new Game(10,"used for testing",1,5,2010,5);
-            Game seventh = new Game(10,"used for testing",1,5,2010,5);
-            Game eighth = new Game(10,"used for testing",1,5,2010,5);
-            Game ninth = new Game(10,"used for testing",1,5,2010,5);
-            Game tenth = new Game(10,"used for testing",1,5,2010,5);
+            Game first = new Game(10, "Demo1", 1, 5, 2010, 5, "");
+            Game second = new Game(10, "Demo2", 1, 5, 2010, 5, "");
+            Game third = new Game(10, "used for testing", 1, 5, 2010, 5, "");
+            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
+            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
+            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
+            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5, "");
+            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
+            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
             list.add(first);
             list.add(second);
             list.add(third);
@@ -300,7 +309,7 @@ public class HomePageActivity extends AppCompatActivity {
             list.add(ninth);
             list.add(tenth);
             //............................................................................
-            msItemAdapter = new ItemAdapter(inflater,list);
+            msItemAdapter = new ItemAdapter(inflater, list);
             search.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -311,6 +320,7 @@ public class HomePageActivity extends AppCompatActivity {
             Bundle args = getArguments();
             return rootView;
         }
+
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
@@ -362,16 +372,16 @@ public class HomePageActivity extends AppCompatActivity {
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            Game first = new Game(10,"Game Name",1,5,2010,5);
-            Game second = new Game(10,"used for testing",1,5,2010,5);
-            Game third = new Game(10,"used for testing",1,5,2010,5);
-            Game forth = new Game(10,"used for testing",1,5,2010,5);
-            Game fifth = new Game(10,"used for testing",1,5,2010,5);
-            Game sixth = new Game(10,"used for testing",1,5,2010,5);
-            Game seventh = new Game(10,"used for testing",1,5,2010,5);
-            Game eighth = new Game(10,"used for testing",1,5,2010,5);
-            Game ninth = new Game(10,"used for testing",1,5,2010,5);
-            Game tenth = new Game(10,"used for testing",1,5,2010,5);
+            Game first = new Game(10, "Game Name", 1, 5, 2010, 5,"");
+            Game second = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game third = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
             list.add(first);
             list.add(second);
             list.add(third);
@@ -382,7 +392,7 @@ public class HomePageActivity extends AppCompatActivity {
             list.add(eighth);
             list.add(ninth);
             list.add(tenth);
-            mItemAdapter = new ItemAdapter(inflater,list);
+            mItemAdapter = new ItemAdapter(inflater, list);
             lyHome = (ListView) rootView.findViewById(R.id.recommlist);
             Bundle args = getArguments();
             return rootView;
@@ -395,7 +405,7 @@ public class HomePageActivity extends AppCompatActivity {
             lyHome.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                   // Item currentItem = adapter.getItem(position);
+                    // Item currentItem = adapter.getItem(position);
                     // (...)
                 }
             });
@@ -406,7 +416,8 @@ public class HomePageActivity extends AppCompatActivity {
     public static class ItemAdapter extends BaseAdapter {
         private List<Game> mitem;
         private LayoutInflater minflater;
-        public ItemAdapter(LayoutInflater inflater, List<Game> items){
+
+        public ItemAdapter(LayoutInflater inflater, List<Game> items) {
             mitem = items;
             minflater = inflater;
         }
@@ -428,7 +439,7 @@ public class HomePageActivity extends AppCompatActivity {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View viewInformation = minflater.inflate(R.layout.listview_item,null);
+            View viewInformation = minflater.inflate(R.layout.listview_item, null);
             Game item = mitem.get(i);
             TextView title = viewInformation.findViewById(R.id.itemTitle);
             TextView max = viewInformation.findViewById(R.id.atenddessnummax);
@@ -437,10 +448,10 @@ public class HomePageActivity extends AppCompatActivity {
             TextView year = viewInformation.findViewById(R.id.year);
             ImageView image = viewInformation.findViewById(R.id.gamepic);
             title.setText(item.getName());
-            min.setText("Min Play: "+Integer.toString(item.getMinPlayers()));
-            max.setText("Max Play: "+Integer.toString(item.getMaxPlayers()));
-            year.setText("["+Integer.toString(item.getYear())+"]");
-            time.setText(Integer.toString(item.getPlayTime())+" mins");
+            min.setText("Min Play: " + Integer.toString(item.getMinPlayers()));
+            max.setText("Max Play: " + Integer.toString(item.getMaxPlayers()));
+            year.setText("[" + Integer.toString(item.getYear()) + "]");
+            time.setText(Integer.toString(item.getPlayTime()) + " mins");
             //image.setImageResource(item.getImageId());
             return viewInformation;
         }

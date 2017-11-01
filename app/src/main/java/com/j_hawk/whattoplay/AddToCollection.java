@@ -1,10 +1,8 @@
 package com.j_hawk.whattoplay;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,15 +13,11 @@ import android.widget.Toast;
 
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
-import com.j_hawk.whattoplay.services.OnlineGame;
-import com.j_hawk.whattoplay.services.ParserGame;
-import com.j_hawk.whattoplay.services.ParserGameList;
+import com.j_hawk.whattoplay.services.FindGameByID;
+import com.j_hawk.whattoplay.services.FindGamesByQuery;
+import com.j_hawk.whattoplay.data.OnlineGame;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -34,7 +28,6 @@ public class AddToCollection extends AppCompatActivity {
 
     private DBHelper dbHelper;
     private Toast statusMessage;
-    private ProgressBar progressBar;
     private ListView gameList;
 
     @Override
@@ -44,9 +37,6 @@ public class AddToCollection extends AppCompatActivity {
 
         dbHelper = new DBHelper(getApplicationContext());
         statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
         gameList = (ListView)findViewById(R.id.listView);
     }
 
@@ -100,85 +90,5 @@ public class AddToCollection extends AppCompatActivity {
             statusMessage.setText("ERROR: Game is already in your collection");
         }
         statusMessage.show();
-    }
-
-    private class FindGamesByQuery extends AsyncTask<String, Void, ArrayList<OnlineGame>> {
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.bringToFront();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected ArrayList<OnlineGame> doInBackground(String... params) {
-            ArrayList<OnlineGame> gameResults;
-            String urlString= "https://www.boardgamegeek.com/xmlapi2/search?type=boardgame&query=" + params[0];
-            Log.i("test", urlString);
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Log.i("test", "" + urlConnection.getResponseCode());
-                try {
-                    InputStream in = urlConnection.getInputStream();
-                    ParserGameList parser = new ParserGameList();
-                    List<OnlineGame> gameList = parser.parse(in);
-                    gameResults = new ArrayList<>(gameList);
-                    return gameResults;
-                } finally {
-                    urlConnection.disconnect();
-                }
-
-            } catch (Exception e) {
-                Log.e("ERROR", e.getMessage(), e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<OnlineGame> onlineGames) {
-            progressBar.setVisibility(View.GONE);
-            super.onPostExecute(onlineGames);
-        }
-    }
-
-    private class FindGameByID extends AsyncTask <Integer, Void, Game> {
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.bringToFront();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Game doInBackground(Integer... params) {
-            String urlString= "https://www.boardgamegeek.com/xmlapi2/thing?id=" + params[0];
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-                try {
-                    InputStream in = urlConnection.getInputStream();
-                    ParserGame parser = new ParserGame();
-                    List<Game> game = parser.parse(in);
-                    return game.get(0);
-
-                } finally {
-                    urlConnection.disconnect();
-                }
-
-            } catch (Exception e) {
-                Log.e("ERROR", e.getMessage(), e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Game game) {
-            progressBar.setVisibility(View.GONE);
-            super.onPostExecute(game);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.j_hawk.whattoplay.services;
+package com.j_hawk.whattoplay.data;
 
 /**
  * Created by martin on 10/27/2017.
@@ -10,7 +10,7 @@ public class OnlineGame {
     private int id;
     private int year;
 
-    OnlineGame(int id, String name, int year)
+    public OnlineGame(int id, String name, int year)
     {
         this.id=id;
         this.name =name;

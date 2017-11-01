@@ -1,5 +1,6 @@
 package com.j_hawk.whattoplay.services;
 
+import android.util.Log;
 import android.util.Xml;
 
 import com.j_hawk.whattoplay.data.OnlineGame;
@@ -13,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by martin on 10/27/2017.
+ * Created by kevin on 10/27/2017.
  */
 
-public class ParserGameList {
+public class ParserCollectionList {
 
         // We don't use namespaces
         private  final String ns = null;
@@ -58,8 +59,8 @@ public class ParserGameList {
 // to their respective "read" methods for processing. Otherwise, skips the tag.
         private OnlineGame readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
             parser.require(XmlPullParser.START_TAG, ns, "item");
-            String gameName = null;
-            int id = Integer.parseInt(parser.getAttributeValue(null, "id"));;
+            String gameName = "";
+            int id = Integer.parseInt(parser.getAttributeValue(null, "objectid"));;
             int yearPublished = 0;
 
             while (parser.next() != XmlPullParser.END_TAG) {
@@ -75,6 +76,7 @@ public class ParserGameList {
                     skip(parser);
                 }
             }
+            Log.i("test", gameName + " : " + id + " : " + yearPublished);
             return new OnlineGame(id, gameName, yearPublished);
         }
 
@@ -85,7 +87,8 @@ public class ParserGameList {
         parser.require(XmlPullParser.START_TAG, ns, "name");
         String tag = parser.getName();
         if (tag.equals("name")) {
-            game = parser.getAttributeValue(null, "value");
+            parser.next();
+            game = parser.getText();
             parser.nextTag();
         }
         return game;
@@ -96,9 +99,9 @@ public class ParserGameList {
         int year = 0000;
         parser.require(XmlPullParser.START_TAG, ns, "yearpublished");
         String tag = parser.getName();
-        String gameType = parser.getAttributeValue(null, "type");
         if (tag.equals("yearpublished")) {
-            year = Integer.parseInt(parser.getAttributeValue(null, "value"));;
+            parser.next();
+            year = Integer.parseInt(parser.getText());;
             parser.nextTag();
         }
         return year;

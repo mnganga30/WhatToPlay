@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/backgroundimg"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="291dp"
         app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
     <Button
@@ -23,6 +23,12 @@
         android:layout_height="63dp"
         android:layout_weight="0.01"
         android:text="Manage Collection" />
+
+    <Button
+        android:id="@+id/importCollectionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Import From Board Game Geek" />
 
     <Button
         android:id="@+id/addMode"

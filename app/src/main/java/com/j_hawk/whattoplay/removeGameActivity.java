@@ -47,8 +47,8 @@ public class removeGameActivity extends Activity{
         //setupGameView();
       //  allGames=dbHelper.getAllGames();
         allGames = new ArrayList<Game>();
-        Game first = new Game(12,"jijiboom",1,5,2011,50);
-        Game second = new Game(213,"yang yiju",1,2,3,4);
+        Game first = new Game(12,"jijiboom",1,5,2011,50, "");
+        Game second = new Game(213,"yang yiju",1,2,3,4, "");
         allGames.add(first);
         allGames.add(second);
         viewGameList=(ListView) findViewById(R.id.gameList);

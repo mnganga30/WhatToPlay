@@ -33,6 +33,7 @@ public final class GameDB {
         public static final String COLUMN_NAME_MAX_PLAYERS = "maxPlayers";
         public static final String COLUMN_NAME_YEAR = "year";
         public static final String COLUMN_NAME_PLAY_TIME = "playTime";
+        public static final String COLUMN_NAME_THUMBNAIL = "thumbnail";
 
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
@@ -41,7 +42,8 @@ public final class GameDB {
                 COLUMN_NAME_MIN_PLAYERS + " INTEGER," +
                 COLUMN_NAME_MAX_PLAYERS + " INTEGER," +
                 COLUMN_NAME_YEAR + " INTEGER," +
-                COLUMN_NAME_PLAY_TIME + " INTEGER);";
+                COLUMN_NAME_PLAY_TIME + " INTEGER)," +
+                COLUMN_NAME_THUMBNAIL + "TEXT;";
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 }

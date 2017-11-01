@@ -63,6 +63,7 @@ public class ParserGame {
         int playTime = 0;
         int id = Integer.parseInt(parser.getAttributeValue(null, "id"));;
         int yearPublished = 0000;
+        String thumbnail = "";
 
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -79,11 +80,13 @@ public class ParserGame {
                 maxPlayers = Integer.parseInt(parser.getAttributeValue(null, "value"));
             } else if (name.equals("playingtime")) {
                 playTime = Integer.parseInt(parser.getAttributeValue(null, "value"));
+            } else if (name.equals("thumbnail")) {
+                thumbnail = parser.getAttributeValue(null, "value");
             } else {
                 skip(parser);
             }
         }
-        return new Game(id, gameName, minPlayers, maxPlayers, yearPublished, playTime);
+        return new Game(id, gameName, minPlayers, maxPlayers, yearPublished, playTime, thumbnail);
     }
 
 

@@ -16,14 +16,16 @@ public class Game {
     private int maxPlayers;
     private int year;
     private int playTime;
+    private String thumbnail;
 
-    public Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime) {
+    public Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime, String thumbnail) {
         this.id = id;
         this.name = name;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
         this.year= year;
         this.playTime = playTime;
+        this.thumbnail = thumbnail;
     }
 
     public int getId() {
@@ -48,5 +50,9 @@ public class Game {
 
     public int getPlayTime() {
         return playTime;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
     }
 }
