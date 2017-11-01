@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         //create table
+        Log.i("sql", "Creating table: " + GameDB.GameCollection.CREATE_TABLE);
         sqLiteDatabase.execSQL(GameDB.GameCollection.CREATE_TABLE);
     }
 
@@ -47,6 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         // Delete all tables
+        Log.i("sql", "Updating DB");
         sqLiteDatabase.execSQL(GameDB.GameCollection.DROP_TABLE);
         onCreate(sqLiteDatabase);
     }
@@ -59,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return -1 for failure, otherwise will return the row inserted at.
      */
     public long addGame(Game game) {
+
         SQLiteDatabase db = this.getWritableDatabase(); // is this okay?
 
         ContentValues values = new ContentValues();

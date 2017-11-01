@@ -51,8 +51,20 @@ public class Game {
     public int getPlayTime() {
         return playTime;
     }
-
     public String getThumbnail() {
         return thumbnail;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", minPlayers=" + minPlayers +
+                ", maxPlayers=" + maxPlayers +
+                ", year=" + year +
+                ", playTime=" + playTime +
+                ", thumbnail='" + thumbnail + '\'' +
+                '}';
     }
 }

@@ -3,6 +3,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -83,6 +84,7 @@ public class AddToCollection extends AppCompatActivity {
 
     public void addGameToCollection(int id) throws ExecutionException, InterruptedException {
         Game newGame = new FindGameByID().execute(id).get();
+        Log.i("test", newGame.toString());
         long result = dbHelper.addGame(newGame);
         if (result != -1) {
             statusMessage.setText("Game Succesfully Added To Collection!");

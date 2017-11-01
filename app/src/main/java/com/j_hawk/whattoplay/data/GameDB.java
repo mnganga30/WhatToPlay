@@ -13,7 +13,7 @@ import android.provider.BaseColumns;
 public final class GameDB {
 
     // Version should be changed IF any schemas are MODIFIED
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "database.db";
 
     /**
@@ -42,8 +42,8 @@ public final class GameDB {
                 COLUMN_NAME_MIN_PLAYERS + " INTEGER," +
                 COLUMN_NAME_MAX_PLAYERS + " INTEGER," +
                 COLUMN_NAME_YEAR + " INTEGER," +
-                COLUMN_NAME_PLAY_TIME + " INTEGER)," +
-                COLUMN_NAME_THUMBNAIL + "TEXT;";
+                COLUMN_NAME_PLAY_TIME + " INTEGER," +
+                COLUMN_NAME_THUMBNAIL + " TEXT);";
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 }
