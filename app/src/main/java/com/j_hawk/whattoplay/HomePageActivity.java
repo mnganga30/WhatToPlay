@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
 
 import java.util.ArrayList;
@@ -242,25 +243,52 @@ public class HomePageActivity extends AppCompatActivity {
         private final List<Game> list = new ArrayList<>();
         private ItemAdapter msItemAdapter;
         private ListView lySearch = null;
+        private DBHelper dbHelper;
 
         @Override
-        public View onCreateView(LayoutInflater inflater,
-                                 ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(final LayoutInflater inflater,
+                                 ViewGroup container, final Bundle savedInstanceState) {
             View rootView = inflater.inflate(
                     R.layout.searchpage, container, false);
+            dbHelper = new DBHelper(rootView.getContext());
+            lySearch = (ListView) rootView.findViewById(R.id.searchingresult);
             ImageButton search = (ImageButton) rootView.findViewById(R.id.searchbutton);
             final EditText input = (EditText) rootView.findViewById(R.id.editText);
-
             Spinner spinner = (Spinner) rootView.findViewById(R.id.searchmode);
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                     R.array.mode, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
+            search.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArrayList<Game> games = dbHelper.getAllGames();
+                    if (input.getInputType() == TYPE_CLASS_TEXT) {
+                        for (int i = 0; i < games.size(); i++) {
+                            if (checkName(games.get(i).getName(), input.getText().toString())) {
+                                Game result = games.get(i);
+                                list.add(result);
+                                msItemAdapter = new ItemAdapter(inflater, list);
+                                lySearch.setAdapter(msItemAdapter);
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < games.size(); i++) {
+                            if (games.get(i).getMinPlayers() <= Integer.parseInt(input.getText().toString()) &&
+                                    games.get(i).getMaxPlayers() >= Integer.parseInt(input.getText().toString())) {
+                                Game result = games.get(i);
+                                list.add(result);
+                            }
+                        }
+                        msItemAdapter = new ItemAdapter(inflater, list);
+                        lySearch.setAdapter(msItemAdapter);
+                    }
+                }
+            });
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     // Two different modes
-
                     //search by name
                     if(position == 0){
                         input.setText("");
@@ -278,36 +306,6 @@ public class HomePageActivity extends AppCompatActivity {
 
                 }
             });
-            //can be delete, cause they just used for testing...........................
-            Game first = new Game(10,"Demo1",1,5,2010,5);
-            Game second = new Game(10,"Demo2",1,5,2010,5);
-            Game third = new Game(10,"used for testing",1,5,2010,5);
-            Game forth = new Game(10,"used for testing",1,5,2010,5);
-            Game fifth = new Game(10,"used for testing",1,5,2010,5);
-            Game sixth = new Game(10,"used for testing",1,5,2010,5);
-            Game seventh = new Game(10,"used for testing",1,5,2010,5);
-            Game eighth = new Game(10,"used for testing",1,5,2010,5);
-            Game ninth = new Game(10,"used for testing",1,5,2010,5);
-            Game tenth = new Game(10,"used for testing",1,5,2010,5);
-            list.add(first);
-            list.add(second);
-            list.add(third);
-            list.add(forth);
-            list.add(fifth);
-            list.add(sixth);
-            list.add(seventh);
-            list.add(eighth);
-            list.add(ninth);
-            list.add(tenth);
-            //............................................................................
-            msItemAdapter = new ItemAdapter(inflater,list);
-            search.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    lySearch.setAdapter(msItemAdapter);
-                }
-            });
-            lySearch = (ListView) rootView.findViewById(R.id.searchingresult);
             Bundle args = getArguments();
             return rootView;
         }
@@ -323,7 +321,14 @@ public class HomePageActivity extends AppCompatActivity {
             });
         }
 
-    }
+        public boolean checkName(String s1, String s2) {
+            if (s1.length() != s2.length()) {
+                return (false);
+            } else {
+                for(int i = 0; i < s1.length(); i++){
+                    if(s1.charAt(i) != s2.charAt(i)){return false;}
+                }return true;}}
+        }
 
     public class HomePagerAdapter extends FragmentStatePagerAdapter {
         public HomePagerAdapter(FragmentManager fm) {
