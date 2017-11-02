@@ -51,6 +51,7 @@ public class Game {
     public int getPlayTime() {
         return playTime;
     }
+
     public String getThumbnail() {
         return thumbnail;
     }
