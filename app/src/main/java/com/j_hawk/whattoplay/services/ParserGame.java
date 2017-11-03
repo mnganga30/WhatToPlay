@@ -72,7 +72,6 @@ public class ParserGame {
             }
             String name = parser.getName();
             if (name.equals("name") && parser.getAttributeValue(null, "type").equals("primary")) {
-                Log.i("name", name);
                 gameName = readGameName(parser);
             } else if (name.equals("yearpublished")) {
                 yearPublished = readPublicationYear(parser);
@@ -103,7 +102,6 @@ public class ParserGame {
         parser.require(XmlPullParser.START_TAG, ns, "name");
         String tag = parser.getName();
         if (tag.equals("name")) {
-            Log.i("test", parser.getAttributeValue(null, "value"));
             game = parser.getAttributeValue(null, "value");
             parser.nextTag();
         }

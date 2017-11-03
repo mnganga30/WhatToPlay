@@ -73,8 +73,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(GameDB.GameCollection.COLUMN_NAME_YEAR, game.getYear());
         values.put(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME, game.getPlayTime());
         values.put(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL, game.getThumbnail());
-        return db.insert(GameDB.GameCollection.TABLE_NAME, null, values);
-    }
+        return db.insertWithOnConflict(GameDB.GameCollection.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+}
 
     /**
      * This function will get all games from the GameCollection table
@@ -226,21 +226,24 @@ public class DBHelper extends SQLiteOpenHelper {
                 sortOrderGame
         );
 
-        queryGame.moveToNext();
+        if (queryGame.moveToNext()) {
+            int id, minPlayers, maxPlayers, year, playTime;
+            String name, thumbnail;
 
-        int id, minPlayers, maxPlayers, year, playTime;
-        String name, thumbnail;
+            id = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection._ID));
+            name = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_GAME_NAME));
+            minPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYERS));
+            maxPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MAX_PLAYERS));
+            year = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_YEAR));
+            playTime = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME));
+            thumbnail = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL));
+            Game game = new Game(id, name, minPlayers, maxPlayers, year, playTime, thumbnail);
 
-        id = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection._ID));
-        name = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_GAME_NAME));
-        minPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYERS));
-        maxPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MAX_PLAYERS));
-        year = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_YEAR));
-        playTime = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME));
-        thumbnail = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL));
-        Game game = new Game(id, name, minPlayers, maxPlayers, year, playTime, thumbnail);
+            queryGame.close();
+            return  game;
+        } else {
+            return null;
+        }
 
-        queryGame.close();
-        return  game;
     }
 }

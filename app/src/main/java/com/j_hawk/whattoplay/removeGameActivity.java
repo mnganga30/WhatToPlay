@@ -50,9 +50,6 @@ public class removeGameActivity extends Activity{
         dbHelper = new DBHelper(getApplicationContext());
         statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         ArrayList<Game> allGames = dbHelper.getAllGames();
-        for(int i = 0; i < allGames.size(); i++){
-            Log.i("abc",allGames.get(i).toString());
-        }
         viewGameList=(ListView) findViewById(R.id.gameList);
         LayoutInflater inflater = getLayoutInflater();
         gameAdapter mgameAdapter=new gameAdapter(inflater,allGames);

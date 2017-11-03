@@ -212,7 +212,8 @@ public class HomePageActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), ImportCollection.class);
-                    startActivity(intent);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    getContext().startActivity(intent);
                 }
             });
 
