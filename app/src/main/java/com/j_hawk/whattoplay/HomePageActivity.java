@@ -318,12 +318,12 @@ public class HomePageActivity extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     // Two different modes
                     //search by name
-                    if (position == 0) {
+                    if (position == 1) {
                         input.setText("");
                         input.setInputType(TYPE_CLASS_TEXT);
                     }
                     //search by number of players
-                    if (position == 1) {
+                    if (position == 0) {
                         input.setText("");
                         input.setInputType(TYPE_CLASS_NUMBER);
                     }
