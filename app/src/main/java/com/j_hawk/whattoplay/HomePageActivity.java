@@ -1,7 +1,12 @@
 package com.j_hawk.whattoplay;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -25,12 +30,22 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
@@ -47,6 +62,7 @@ public class HomePageActivity extends AppCompatActivity {
     private static final String HOME_FRAG = "HomePage";
     private static final String PERSONAL_FRAG = "PersonalPage";
     private static BottomNavigationView navigation;
+    private Toast statusMessage;
 
     @Override
     public void onBackPressed() {
@@ -92,6 +108,7 @@ public class HomePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mySearchPagerAdapter =
@@ -254,7 +271,6 @@ public class HomePageActivity extends AppCompatActivity {
         private ItemAdapter msItemAdapter;
         private ListView lySearch = null;
         private DBHelper dbHelper;
-
         @Override
         public View onCreateView(final LayoutInflater inflater,
                                  ViewGroup container, final Bundle savedInstanceState) {
@@ -271,8 +287,9 @@ public class HomePageActivity extends AppCompatActivity {
             spinner.setAdapter(adapter);
             search.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v) { // need to clear game list after all this be show or brfore next searching
                     ArrayList<Game> games = dbHelper.getAllGames();
+                    list.clear();
                     if (input.getInputType() == TYPE_CLASS_TEXT) {
                         for (int i = 0; i < games.size(); i++) {
                             if (checkName(games.get(i).getName(), input.getText().toString())) {
@@ -283,6 +300,7 @@ public class HomePageActivity extends AppCompatActivity {
                             }
                         }
                     } else {
+                        if(!input.getText().toString().isEmpty()){
                         for (int i = 0; i < games.size(); i++) {
                             if (games.get(i).getMinPlayers() <= Integer.parseInt(input.getText().toString()) &&
                                     games.get(i).getMaxPlayers() >= Integer.parseInt(input.getText().toString())) {
@@ -292,7 +310,7 @@ public class HomePageActivity extends AppCompatActivity {
                         }
                         msItemAdapter = new ItemAdapter(inflater, list);
                         lySearch.setAdapter(msItemAdapter);
-                    }
+                    }}
                 }
             });
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -316,36 +334,6 @@ public class HomePageActivity extends AppCompatActivity {
 
                 }
             });
-            //can be delete, cause they just used for testing...........................
-            Game first = new Game(10, "Demo1", 1, 5, 2010, 5, "");
-            Game second = new Game(10, "Demo2", 1, 5, 2010, 5, "");
-            Game third = new Game(10, "used for testing", 1, 5, 2010, 5, "");
-            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
-            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
-            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
-            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5, "");
-            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5, "");
-            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            list.add(first);
-            list.add(second);
-            list.add(third);
-            list.add(forth);
-            list.add(fifth);
-            list.add(sixth);
-            list.add(seventh);
-            list.add(eighth);
-            list.add(ninth);
-            list.add(tenth);
-            //............................................................................
-            msItemAdapter = new ItemAdapter(inflater, list);
-            search.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    lySearch.setAdapter(msItemAdapter);
-                }
-            });
-            lySearch = (ListView) rootView.findViewById(R.id.searchingresult);
             Bundle args = getArguments();
             return rootView;
         }
@@ -408,16 +396,16 @@ public class HomePageActivity extends AppCompatActivity {
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            Game first = new Game(10, "Game Name", 1, 5, 2010, 5,"");
-            Game second = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game third = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
-            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"");
+            Game first = new Game(10, "Game Name", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game second = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game third = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
+            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
             list.add(first);
             list.add(second);
             list.add(third);
@@ -452,6 +440,31 @@ public class HomePageActivity extends AppCompatActivity {
     public static class ItemAdapter extends BaseAdapter {
         private List<Game> mitem;
         private LayoutInflater minflater;
+        private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Bitmap doInBackground(String... URL) {
+                String imageURL = URL[0];
+                Bitmap bitmap = null;
+                try {
+                    InputStream input = new java.net.URL(imageURL).openStream();
+                    bitmap = BitmapFactory.decodeStream(input);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return bitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                //image.setImageBitmap(result);
+            }
+        }
 
         public ItemAdapter(LayoutInflater inflater, List<Game> items) {
             mitem = items;
@@ -487,10 +500,20 @@ public class HomePageActivity extends AppCompatActivity {
             min.setText("Min Play: " + Integer.toString(item.getMinPlayers()));
             max.setText("Max Play: " + Integer.toString(item.getMaxPlayers()));
             year.setText("[" + Integer.toString(item.getYear()) + "]");
-            time.setText(Integer.toString(item.getPlayTime()) + " mins");
-            //image.setImageResource(item.getImageId());
+            if(item.getPlayTime() == 0){
+            time.setText("Not Sure Game time");
+            }else{time.setText(Integer.toString(item.getPlayTime()) + " mins");}
+            try {
+                image.setImageBitmap(new DownloadImage().execute(item.getThumbnail()).get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
             return viewInformation;
         }
     }
+
 }
+
 
