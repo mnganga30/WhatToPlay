@@ -17,10 +17,24 @@ import java.util.List;
  * Created by kevin on 10/29/2017.
  */
 
+/**
+ * ParserGame.java
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ * This class is used to hold the XmlPullParser used to parse the XML in FindGameByID
+ * @return List<Game> returns the List of Games parsed from the InputStream
+ */
 public class ParserGame {
     // We don't use namespaces
     private  final String ns = null;
 
+    /**
+     * Method called to parse the InputStream for Games
+     * @throws XmlPullParserException
+     * @throws IOException
+     * @param in InputStream XML in input stream that contains a game from BoardGameGeek.com
+     * @return List returns the List of Games parsed from the input stream. Only first index of List will contain a Game.
+     */
     public List parse(InputStream in) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();

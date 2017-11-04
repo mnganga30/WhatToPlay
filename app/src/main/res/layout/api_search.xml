@@ -18,12 +18,12 @@
         android:onClick="searchButtonClicked"
         android:text="Search"
         app:layout_constraintHorizontal_bias="0.652"
-        app:layout_constraintLeft_toRightOf="@+id/removeGame"
+        app:layout_constraintLeft_toRightOf="@+id/findGameTxt"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/removeGame"
+        android:id="@+id/findGameTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"

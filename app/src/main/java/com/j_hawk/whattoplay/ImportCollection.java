@@ -9,10 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,16 +25,19 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static java.security.AccessController.getContext;
 
 /**
  * Created by kevin on 10/30/2017.
  */
 
+/**
+ * This page is the activity for importing a collection from BoardGameGeek.com
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ */
 public class ImportCollection extends AppCompatActivity {
 
     private DBHelper dbHelper;
@@ -114,6 +115,9 @@ public class ImportCollection extends AppCompatActivity {
         });
     }
 
+    /**
+     * Overrides back button functionality. Navigates back to Home screen without destroying acticity.
+     */
     @Override
     public void onBackPressed() {
         Intent i = new Intent(ImportCollection.this, HomePageActivity.class);
