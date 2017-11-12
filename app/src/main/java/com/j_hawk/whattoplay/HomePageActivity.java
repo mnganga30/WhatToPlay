@@ -396,26 +396,6 @@ public class HomePageActivity extends AppCompatActivity {
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            Game first = new Game(10, "Game Name", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game second = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game third = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            list.add(first);
-            list.add(second);
-            list.add(third);
-            list.add(forth);
-            list.add(fifth);
-            list.add(sixth);
-            list.add(seventh);
-            list.add(eighth);
-            list.add(ninth);
-            list.add(tenth);
             mItemAdapter = new ItemAdapter(inflater, list);
             lyHome = (ListView) rootView.findViewById(R.id.recommlist);
             Bundle args = getArguments();

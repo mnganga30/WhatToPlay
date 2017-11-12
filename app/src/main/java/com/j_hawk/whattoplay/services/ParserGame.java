@@ -21,6 +21,21 @@ public class ParserGame {
     // We don't use namespaces
     private  final String ns = null;
 
+    private String gameName;
+    private int minPlayers;
+    private int maxPlayers;
+    private int playTime;
+    private int id;
+    private int yearPublished;
+    private String thumbnail;
+    private int minPlayerAge;
+    private String suggestedMinPlayerAge;
+    private ArrayList<String> categories;
+    private ArrayList<String> mechanics;
+    private int recommendedPlayers;
+    private String description;
+    private int numVotes;
+
     public List parse(InputStream in) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -58,13 +73,9 @@ public class ParserGame {
 // to their respective "read" methods for processing. Otherwise, skips the tag.
     private Game readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "item");
-        String gameName = "";
-        int minPlayers = 0;
-        int maxPlayers = 0;
-        int playTime = 0;
-        int id = Integer.parseInt(parser.getAttributeValue(null, "id"));;
-        int yearPublished = 0000;
-        String thumbnail = "";
+        id = Integer.parseInt(parser.getAttributeValue(null, "id"));;
+        ArrayList<String> categories = new ArrayList<>();
+        ArrayList<String> mechanics = new ArrayList<>();
 
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -88,11 +99,35 @@ public class ParserGame {
                 parser.next();
                 thumbnail = parser.getText();
                 parser.nextTag();
+            } else if (name.equals("minage")) {
+                minPlayerAge = Integer.parseInt(parser.getAttributeValue(null, "value"));
+                parser.nextTag();
+            } else if (name.equals("poll") && parser.getAttributeValue(null, "name").equals("suggested_numplayers")) {
+                numVotes = 0;
+                readPollNumPlayers(parser);
+                parser.next();
+            } else if (name.equals("poll") && parser.getAttributeValue(null, "name").equals("suggested_playerage")) {
+                numVotes = 0;
+                readPollPlayerAge(parser);
+            } else if (name.equals("description")) {
+                parser.next();
+                description = parser.getText();
+                description = description.replaceAll("&#10;", "");
+                parser.nextTag();
+            } else if (name.equals("link")) {
+                if (parser.getAttributeValue(null, "type").equals("boardgamecategory")) {
+                    categories.add(parser.getAttributeValue(null, "value"));
+                } else if (parser.getAttributeValue(null, "type").equals("boardgamemechanic")) {
+                    mechanics.add(parser.getAttributeValue(null, "value"));
+                }
+                parser.nextTag();
             } else {
                 skip(parser);
             }
         }
-        return new Game(id, gameName, minPlayers, maxPlayers, yearPublished, playTime, thumbnail);
+        return new Game(id, gameName, minPlayers, maxPlayers, yearPublished, playTime, thumbnail,
+                        minPlayerAge, suggestedMinPlayerAge, categories, mechanics,
+                        recommendedPlayers, description);
     }
 
 
@@ -110,7 +145,7 @@ public class ParserGame {
 
     // Processes link tags in the Game Name.
     private int readPublicationYear(XmlPullParser parser) throws IOException, XmlPullParserException {
-        int year = 0000;
+        int year = 0;
         parser.require(XmlPullParser.START_TAG, ns, "yearpublished");
         String tag = parser.getName();
         if (tag.equals("yearpublished")) {
@@ -118,6 +153,84 @@ public class ParserGame {
             parser.nextTag();
         }
         return year;
+    }
+
+    // Processes link tags in the Game Name.
+    private void readPollNumPlayers(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "poll");
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("results")) {
+                readResultsNumPlayers(parser);
+            } else {
+                return;
+            }
+        }
+    }
+
+    // Processes link tags in the Game Name.
+    private void readResultsNumPlayers(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "results");
+        boolean skip = false;
+        int suggestedPlayers = 0;
+        try {
+            suggestedPlayers = Integer.parseInt(parser.getAttributeValue(null, "numplayers"));
+        } catch (Exception e) {
+            skip = true;
+        }
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("result")) {
+                if (parser.getAttributeValue(null, "value").equals("Best") && !skip) {
+                    int votes = Integer.parseInt(parser.getAttributeValue(null, "numvotes"));
+                    if (votes > numVotes) {
+                        numVotes = votes;
+                        recommendedPlayers = suggestedPlayers;
+                    }
+                }
+                parser.nextTag();
+            }
+        }
+    }
+
+    // Processes link tags in the Game Name.
+    private void readPollPlayerAge(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "poll");
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("results")) {
+                readResultsPlayerAge(parser);
+            }
+        }
+    }
+
+    // Processes link tags in the Game Name.
+    private void readResultsPlayerAge(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, ns, "results");
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("result")) {
+                String tempPlayerAge = parser.getAttributeValue(null, "value");
+                int votes = Integer.parseInt(parser.getAttributeValue(null, "numvotes"));
+                if (votes > numVotes) {
+                    numVotes = votes;
+                    suggestedMinPlayerAge = tempPlayerAge;
+                }
+                parser.nextTag();
+            }
+        }
     }
 
 
