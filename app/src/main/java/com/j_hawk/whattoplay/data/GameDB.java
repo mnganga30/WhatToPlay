@@ -50,13 +50,19 @@ public final class GameDB {
                 COLUMN_NAME_YEAR + " INTEGER," +
                 COLUMN_NAME_PLAY_TIME + " INTEGER," +
                 COLUMN_NAME_THUMBNAIL + " TEXT," +
-                COLUMN_NAME_MIN_PLAYER_AGE + " TEXT," +
+                COLUMN_NAME_MIN_PLAYER_AGE + " INTEGER," +
                 COLUMN_NAME_SUGGESTED_AGE + " INTEGER," +
                 COLUMN_NAME_RECOMMENDED_PLAYERS + " INTEGER," +
                 COLUMN_NAME_DESCRIPTION + " TEXT);";
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
+    /**
+     * {Class} GameMechanics
+     * This defines the columns for our GameMechanics table
+     *
+     * @since 2.0
+     */
     public static class GameMechanics implements BaseColumns {
         public static final String TABLE_NAME = "gameMechanics";
         public static final String COLUMN_NAME_GAME_ID = "gameID";
@@ -70,6 +76,12 @@ public final class GameDB {
         public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
+    /**
+     * {Class} GameCategories
+     * This defines the columns for our GameCategories table
+     *
+     * @since 2.0
+     */
     public static class GameCategories implements BaseColumns {
         public static final String TABLE_NAME = "gameCategories";
         public static final String COLUMN_NAME_GAME_ID = "gameID";

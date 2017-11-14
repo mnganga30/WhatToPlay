@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * DBHelper.java
@@ -137,8 +139,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         while (queryGame.moveToNext()) {
 
-            int id, minPlayers, maxPlayers, year, playTime, minPlayerAge, recommendedPlayers;
-            String name, thumbnail, description, suggestedMinPlayerAge;
+            int id, minPlayers, maxPlayers, year, playTime, minPlayerAge, recommendedPlayers, suggestedMinPlayerAge;
+            String name, thumbnail, description;
 
             id = Integer.parseInt(queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection._ID)));
             name = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_GAME_NAME));
@@ -148,7 +150,7 @@ public class DBHelper extends SQLiteOpenHelper {
             playTime = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME));
             thumbnail = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL));
             minPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYER_AGE));
-            suggestedMinPlayerAge = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
+            suggestedMinPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
             recommendedPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS));
             description = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_DESCRIPTION));
 
@@ -189,7 +191,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor queryMechanics = db.query(
                 GameDB.GameMechanics.TABLE_NAME,
                 columnsMechanics,
-                null, null, null, null,
+                GameDB.GameMechanics.COLUMN_NAME_GAME_ID + " = ?", args, null, null,
                 sortOrderMechanics
         );
 
@@ -225,7 +227,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor queryCategories = db.query(
                 GameDB.GameCategories.TABLE_NAME,
                 columnsMechanics,
-                null, null, null, null,
+                GameDB.GameCategories.COLUMN_NAME_GAME_ID + " = ?", args, null, null,
                 sortOrderCategories
         );
 
@@ -241,7 +243,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * This function will delete the queried game from the database
-     * @return -1 for failure, otherwise will return the row inserted at.
+     * @return -number of rows deleted.
      * @since 1.0
      */
     public int removeGame(int id) {
@@ -249,6 +251,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] args = new String[] {String.valueOf(id)};
+
+        db.delete(GameDB.GameMechanics.TABLE_NAME, GameDB.GameMechanics.COLUMN_NAME_GAME_ID + "=?", args);
+        db.delete(GameDB.GameCategories.TABLE_NAME, GameDB.GameCategories.COLUMN_NAME_GAME_ID + "=?", args);
 
         return db.delete(GameDB.GameCollection.TABLE_NAME, "_ID=?", args);
     }
@@ -291,8 +296,8 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Game> gameList = new ArrayList<>();
 
         while(queryGame.moveToNext()) {
-            int id, minPlayers, maxPlayers, year, playTime, minPlayerAge, recommendedPlayers;
-            String name, thumbnail, description, suggestedMinPlayerAge;
+            int id, minPlayers, maxPlayers, year, playTime, minPlayerAge, recommendedPlayers, suggestedMinPlayerAge;
+            String name, thumbnail, description;
 
             id = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection._ID));
             name = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_GAME_NAME));
@@ -302,7 +307,7 @@ public class DBHelper extends SQLiteOpenHelper {
             playTime = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME));
             thumbnail = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL));
             minPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYER_AGE));
-            suggestedMinPlayerAge = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
+            suggestedMinPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
             recommendedPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS));
             description = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_DESCRIPTION));
 
@@ -312,6 +317,148 @@ public class DBHelper extends SQLiteOpenHelper {
                     minPlayerAge, suggestedMinPlayerAge, categories, mechanics,
                     recommendedPlayers, description);
             gameList.add(game);
+        }
+        queryGame.close();
+
+        return  gameList;
+    }
+
+    /**
+     * This function will get all games from the GameCollection table that meet the passed filters
+     * @param numOfPlayers The number players participating.
+     * @return A sorted ArrayList of Games from the Database
+     * @since 1.0
+     */
+    public ArrayList<Game> getGamesByFilter(Integer numOfPlayers, boolean bggNumPlayers, String playingTime,
+                                            String minPlayerAge, boolean bggPlayerAge,
+                                            ArrayList<String> mechanics, ArrayList<String> categories) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columnsGame = {
+                GameDB.GameCollection._ID,
+                GameDB.GameCollection.COLUMN_NAME_GAME_NAME,
+                GameDB.GameCollection.COLUMN_NAME_MIN_PLAYERS,
+                GameDB.GameCollection.COLUMN_NAME_MAX_PLAYERS,
+                GameDB.GameCollection.COLUMN_NAME_YEAR,
+                GameDB.GameCollection.COLUMN_NAME_PLAY_TIME,
+                GameDB.GameCollection.COLUMN_NAME_THUMBNAIL,
+                GameDB.GameCollection.COLUMN_NAME_MIN_PLAYER_AGE,
+                GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE,
+                GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS,
+                GameDB.GameCollection.COLUMN_NAME_DESCRIPTION
+        };
+
+        String sortOrderGame = GameDB.GameCollection.COLUMN_NAME_GAME_NAME + " COLLATE NOCASE ASC";
+        ArrayList<String> whereClasue = new ArrayList<>();
+        String args = "";
+        int numOfArgs = 0;
+        if (numOfPlayers != null) {
+            numOfArgs++;
+            if (!bggNumPlayers) {
+                whereClasue.add(String.valueOf(numOfPlayers));
+                whereClasue.add(String.valueOf(numOfPlayers));
+                args += GameDB.GameCollection.COLUMN_NAME_MIN_PLAYERS + " <= ? AND " + GameDB.GameCollection.COLUMN_NAME_MAX_PLAYERS + " >= ?";
+            } else {
+                whereClasue.add(String.valueOf(numOfPlayers));
+                args += GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS + " = ?";
+            }
+
+        }
+        if (playingTime != null) {
+            if (numOfArgs != 0) {
+                args += " AND ";
+            }
+            if (playingTime.equals("0-60")) {
+                whereClasue.add("0");
+                whereClasue.add(("60"));
+                numOfArgs += 2;
+                args += GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " >= ? AND " + GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " <= ?";
+            } else if (playingTime.equals("60-120")) {
+                whereClasue.add("60");
+                whereClasue.add("120");
+                numOfArgs += 2;
+                args += GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " >= ? AND " + GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " <= ?";
+            } else {
+                whereClasue.add("120");
+                numOfArgs++;
+                args += GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " >= ?";
+            }
+
+        }
+
+        if (minPlayerAge != null) {
+
+            if (numOfArgs != 0) {
+                args += " AND ";
+            }
+
+            numOfArgs++;
+
+            if (!bggPlayerAge) {
+                args += GameDB.GameCollection.COLUMN_NAME_MIN_PLAYER_AGE + " <= ?";
+            } else {
+                args += GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE + " <= ?";
+            }
+            if (!minPlayerAge.equals("5") && !minPlayerAge.equals("10") && !minPlayerAge.equals("15") && !minPlayerAge.equals("18") && !minPlayerAge.equals("21")) {
+                return null;
+            }
+            whereClasue.add(minPlayerAge);
+        }
+
+        String[] where = new String[whereClasue.size()];
+        where = whereClasue.toArray(where);
+
+        Cursor queryGame = db.query(
+                GameDB.GameCollection.TABLE_NAME,
+                columnsGame,
+                args, where, null, null,
+                sortOrderGame
+        );
+
+        ArrayList<Game> gameList = new ArrayList<>();
+
+        while(queryGame.moveToNext()) {
+            int id, minPlayers, maxPlayers, year, playTime, playerAge, recommendedPlayers, suggestedMinPlayerAge;
+            String name, thumbnail, description;
+
+            id = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection._ID));
+            name = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_GAME_NAME));
+            minPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYERS));
+            maxPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MAX_PLAYERS));
+            year = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_YEAR));
+            playTime = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME));
+            thumbnail = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL));
+            playerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYER_AGE));
+            suggestedMinPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
+            recommendedPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS));
+            description = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_DESCRIPTION));
+
+            ArrayList<String> mechs = getMechanics(id);
+            ArrayList<String> cats = getCategories(id);
+            Game game = new Game(id, name, minPlayers, maxPlayers, year, playTime, thumbnail,
+                    playerAge, suggestedMinPlayerAge, cats, mechs,
+                    recommendedPlayers, description);
+            boolean addGame = true;
+            if (mechanics != null) {
+                for (String mechanic : mechanics) {
+                    if (!mechs.contains(mechanic)) {
+                        addGame = false;
+                    }
+                }
+            }
+
+            if (categories != null) {
+                for (String category : categories) {
+                    if (!cats.contains(category)) {
+                        addGame = false;
+                    }
+                }
+            }
+
+            if (addGame) {
+                gameList.add(game);
+            }
         }
         queryGame.close();
 
@@ -353,8 +500,8 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
         if (queryGame.moveToNext()) {
-            int id, minPlayers, maxPlayers, year, playTime, minPlayerAge, recommendedPlayers;
-            String name, thumbnail, description, suggestedMinPlayerAge;
+            int id, minPlayers, maxPlayers, year, playTime, minPlayerAge, recommendedPlayers, suggestedMinPlayerAge;
+            String name, thumbnail, description;
 
             id = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection._ID));
             name = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_GAME_NAME));
@@ -364,7 +511,7 @@ public class DBHelper extends SQLiteOpenHelper {
             playTime = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_PLAY_TIME));
             thumbnail = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_THUMBNAIL));
             minPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_MIN_PLAYER_AGE));
-            suggestedMinPlayerAge = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
+            suggestedMinPlayerAge = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE));
             recommendedPlayers = queryGame.getInt(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS));
             description = queryGame.getString(queryGame.getColumnIndexOrThrow(GameDB.GameCollection.COLUMN_NAME_DESCRIPTION));
 
@@ -380,5 +527,71 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
 
+    }
+
+    /**
+     * This function will return an ArrayList of all unique mechanics
+     * @return ArrayList of  unique mechanics
+     * @since 2.0
+     */
+    public ArrayList<String> getAllMechanics() {
+
+        Set<String> mechanics = new TreeSet<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columnsMechanics = {
+                GameDB.GameMechanics.COLUMN_NAME_MECHANIC
+        };
+
+        Cursor queryMechanics = db.query(
+                GameDB.GameMechanics.TABLE_NAME,
+                columnsMechanics,
+                null, null, null, null, null
+        );
+
+        while(queryMechanics.moveToNext()) {
+            String mechanic = queryMechanics.getString(queryMechanics.getColumnIndexOrThrow(GameDB.GameMechanics.COLUMN_NAME_MECHANIC));
+            mechanics.add(mechanic);
+        }
+
+        queryMechanics.close();
+
+        ArrayList<String> returnList = new ArrayList<>(mechanics);
+
+        return returnList;
+    }
+
+    /**
+     * This function will return an ArrayList of all unique categories
+     * @return ArrayList of  unique categories
+     * @since 2.0
+     */
+    public ArrayList<String> getAllCategories() {
+
+        Set<String> categories = new TreeSet<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columnsCategories = {
+                GameDB.GameCategories.COLUMN_NAME_CATEGORY
+        };
+
+        Cursor queryCategories = db.query(
+                GameDB.GameCategories.TABLE_NAME,
+                columnsCategories,
+                null, null, null, null, null
+        );
+
+        while(queryCategories.moveToNext()) {
+            String category = queryCategories.getString(queryCategories.getColumnIndexOrThrow(GameDB.GameCategories.COLUMN_NAME_CATEGORY));
+            categories.add(category);
+        }
+
+        queryCategories.close();
+
+        ArrayList<String> returnList = new ArrayList<>(categories);
+
+        return returnList;
     }
 }

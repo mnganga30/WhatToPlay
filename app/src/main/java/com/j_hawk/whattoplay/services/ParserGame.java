@@ -29,7 +29,7 @@ public class ParserGame {
     private int yearPublished;
     private String thumbnail;
     private int minPlayerAge;
-    private String suggestedMinPlayerAge;
+    private int suggestedMinPlayerAge;
     private ArrayList<String> categories;
     private ArrayList<String> mechanics;
     private int recommendedPlayers;
@@ -112,7 +112,7 @@ public class ParserGame {
             } else if (name.equals("description")) {
                 parser.next();
                 description = parser.getText();
-                description = description.replaceAll("&#10;", "");
+                description = description.replaceAll("&#10;", "\n");
                 parser.nextTag();
             } else if (name.equals("link")) {
                 if (parser.getAttributeValue(null, "type").equals("boardgamecategory")) {
@@ -220,14 +220,23 @@ public class ParserGame {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
+            boolean skipTag = false;
             String name = parser.getName();
             if (name.equals("result")) {
-                String tempPlayerAge = parser.getAttributeValue(null, "value");
-                int votes = Integer.parseInt(parser.getAttributeValue(null, "numvotes"));
-                if (votes > numVotes) {
-                    numVotes = votes;
-                    suggestedMinPlayerAge = tempPlayerAge;
+                int tempPlayerAge = 0;
+                try {
+                    tempPlayerAge = Integer.parseInt(parser.getAttributeValue(null, "value"));
+                } catch (Exception e) {
+                    skipTag = true;
                 }
+                if (!skipTag) {
+                    int votes = Integer.parseInt(parser.getAttributeValue(null, "numvotes"));
+                    if (votes > numVotes) {
+                        numVotes = votes;
+                        suggestedMinPlayerAge = tempPlayerAge;
+                    }
+                }
+
                 parser.nextTag();
             }
         }

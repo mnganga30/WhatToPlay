@@ -21,14 +21,14 @@ public class Game {
     private int playTime;
     private String thumbnail;
     private int minPlayerAge;
-    private String suggestedMinPlayerAge;
+    private int suggestedMinPlayerAge;
     private ArrayList<String> categories;
     private ArrayList<String> mechanics;
     private int recommendedPlayers;
     private String description;
 
     public Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime, String thumbnail,
-                int minPlayerAge, String suggestedMinPlayerAge, ArrayList<String> categories, ArrayList<String> mechanics,
+                int minPlayerAge, int suggestedMinPlayerAge, ArrayList<String> categories, ArrayList<String> mechanics,
                 int recommendedPlayers, String description) {
         this.id = id;
         this.name = name;
@@ -77,7 +77,7 @@ public class Game {
         return minPlayerAge;
     }
 
-    public String getSuggestedMinPlayerAge() {
+    public int getSuggestedMinPlayerAge() {
         return suggestedMinPlayerAge;
     }
 
