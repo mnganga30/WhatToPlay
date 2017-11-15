@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="395dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="8dp"
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="223dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="17dp"
+                    android:text="Use BGG Player recommended"
+                    app:layout_constraintTop_toBottomOf="@+id/numberofplayer"
+                    tools:layout_editor_absoluteX="16dp" />
+
+                <CheckBox
+                    android:id="@+id/checkBox2"
+                    android:layout_width="267dp"
+                    android:layout_height="35dp"
+                    android:text="Use BGG Player recommended"
+                    android:layout_marginRight="8dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="-8dp"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner6"
+                    app:layout_constraintHorizontal_bias="0.071" />
+
+                <Spinner
+                    android:id="@+id/spinner5"
+                    android:layout_width="81dp"
+                    android:layout_height="38dp"
+                    tools:layout_editor_absoluteY="0dp"
+                    android:layout_marginRight="8dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/numberofplayer"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintHorizontal_bias="0.0" />
+
+                <Spinner
+                    android:id="@+id/spinner6"
+                    android:layout_width="103dp"
+                    android:layout_height="48dp"
+                    tools:layout_editor_absoluteY="157dp"
+                    android:layout_marginRight="173dp"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+                <Spinner
+                    android:id="@+id/spinner7"
+                    android:layout_width="153dp"
+                    android:layout_height="43dp"
+                    android:layout_marginRight="8dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/playtime"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="24dp"
+                    app:layout_constraintBottom_toTopOf="@+id/spinner6"
+                    app:layout_constraintHorizontal_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/numberofplayer"
+                    android:layout_width="122dp"
+                    android:layout_height="22dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Number of Player:"
+                    android:textSize="14dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/playtime"
+                    android:layout_width="83dp"
+                    android:layout_height="23dp"
+                    android:text="Play Time:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:layout_marginLeft="16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_marginTop="27dp"
+                    app:layout_constraintTop_toBottomOf="@+id/checkBox" />
+
+                <TextView
+                    android:id="@+id/minplayage"
+                    android:layout_width="99dp"
+                    android:layout_height="23dp"
+                    android:text="Min Play-Age:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    tools:layout_editor_absoluteY="170dp"
+                    app:layout_constraintRight_toLeftOf="@+id/spinner6"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/mechenicsTT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mechenics"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+            <ListView
+                android:id="@+id/machenics"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+            <ListView
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GO >>"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="281dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
