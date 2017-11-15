@@ -4,10 +4,12 @@ package com.j_hawk.whattoplay.data;
  * Created by kevin on 10/24/2017.
  */
 
+import java.util.ArrayList;
+
 /**
  * Game.java
- * @author Kevin, Simon, Jian, Martin
- * @version 1.0
+ * @author Kevin
+ * @version 2.0
  * This class holds the shape for all games that the GameDB holds.
  */
 public class Game {
@@ -18,18 +20,16 @@ public class Game {
     private int year;
     private int playTime;
     private String thumbnail;
+    private int minPlayerAge;
+    private int suggestedMinPlayerAge;
+    private ArrayList<String> categories;
+    private ArrayList<String> mechanics;
+    private int recommendedPlayers;
+    private String description;
 
-    /**
-     * Constructor for an Game. Games will always be constructed this way.
-     * @param id Integer ID of the game
-     * @param name String name of the game
-     * @param minPlayers Integer minimum number of players
-     * @param maxPlayers Integer maximum number of players
-     * @param year Integer year the game was published
-     * @param playTime Integer amount of time game takes to play in minutes
-     * @param thumbnail String url provided by BoardGameGeek.com to the thimbnail of the image
-     */
-    public Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime, String thumbnail) {
+    public Game(int id, String name, int minPlayers, int maxPlayers, int year, int playTime, String thumbnail,
+                int minPlayerAge, int suggestedMinPlayerAge, ArrayList<String> categories, ArrayList<String> mechanics,
+                int recommendedPlayers, String description) {
         this.id = id;
         this.name = name;
         this.minPlayers = minPlayers;
@@ -37,61 +37,118 @@ public class Game {
         this.year= year;
         this.playTime = playTime;
         this.thumbnail = thumbnail;
+        this.minPlayerAge = minPlayerAge;
+        this.suggestedMinPlayerAge = suggestedMinPlayerAge;
+        this.categories = categories;
+        this.mechanics = mechanics;
+        this.recommendedPlayers = recommendedPlayers;
+        this.description = description;
     }
 
-    /**
-     * Getter for the Game id
-     * @return Integer id
-     */
     public int getId() {
         return id;
     }
 
-    /**
-     * Getter for the Game name
-     * @return String name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Getter for the Game minPlayers
-     * @return Integer minPlayers
-     */
     public int getMinPlayers() {
         return minPlayers;
     }
 
-    /**
-     * Getter for the Game maxPlayers
-     * @return Integer maxPlayers
-     */
     public int getMaxPlayers() {
         return maxPlayers;
     }
 
-    /**
-     * Getter for the Game year
-     * @return Integer year
-     */
     public int getYear() {
         return year;
     }
 
-    /**
-     * Getter for the Game playTime
-     * @return Integer playTime
-     */
     public int getPlayTime() {
         return playTime;
     }
 
-    /**
-     * Getter for the Game thumbnail
-     * @return String thumbnail
-     */
     public String getThumbnail() {
         return thumbnail;
+    }
+
+    public int getMinPlayerAge() {
+        return minPlayerAge;
+    }
+
+    public int getSuggestedMinPlayerAge() {
+        return suggestedMinPlayerAge;
+    }
+
+    public ArrayList<String> getCategories() {
+        return categories;
+    }
+
+    public ArrayList<String> getMechanics() {
+        return mechanics;
+    }
+
+    public int getRecommendedPlayers() {
+        return recommendedPlayers;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", minPlayers=" + minPlayers +
+                ", maxPlayers=" + maxPlayers +
+                ", year=" + year +
+                ", playTime=" + playTime +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", minPlayerAge=" + minPlayerAge +
+                ", suggestedMinPlayerAge=" + suggestedMinPlayerAge +
+                ", categories=" + categories +
+                ", mechanics=" + mechanics +
+                ", recommendedPlayers=" + recommendedPlayers +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Game)) return false;
+
+        Game game = (Game) obj;
+
+        boolean sameMechanics = true;
+        if (this.mechanics.size() == game.mechanics.size()) {
+            for (int i = 0; i < mechanics.size(); i++) {
+                if (!this.mechanics.get(i).equals(game.mechanics.get(i))) {
+                    sameMechanics = false;
+                    break;
+                }
+            }
+        } else {
+            sameMechanics = false;
+        }
+
+        boolean sameCategories = true;
+        if (this.categories.size() == game.categories.size()) {
+            for (int i = 0; i < categories.size(); i++) {
+                if (!this.categories.get(i).equals(game.categories.get(i))) {
+                    sameCategories = false;
+                    break;
+                }
+            }
+        } else {
+            sameCategories = false;
+        }
+
+
+        return (this.id == game.id && this.name.equals(game.name) && this.minPlayers == game.minPlayers && this.maxPlayers == game.maxPlayers &&
+                this.year == game.year && this.playTime == game.playTime && this.thumbnail.equals(game.thumbnail) && this.minPlayerAge == game.minPlayerAge &&
+                this. suggestedMinPlayerAge == game.suggestedMinPlayerAge && sameMechanics && sameCategories);
     }
 }
