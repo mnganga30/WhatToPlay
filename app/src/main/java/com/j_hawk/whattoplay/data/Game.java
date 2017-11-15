@@ -115,4 +115,40 @@ public class Game {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Game)) return false;
+
+        Game game = (Game) obj;
+
+        boolean sameMechanics = true;
+        if (this.mechanics.size() == game.mechanics.size()) {
+            for (int i = 0; i < mechanics.size(); i++) {
+                if (!this.mechanics.get(i).equals(game.mechanics.get(i))) {
+                    sameMechanics = false;
+                    break;
+                }
+            }
+        } else {
+            sameMechanics = false;
+        }
+
+        boolean sameCategories = true;
+        if (this.categories.size() == game.categories.size()) {
+            for (int i = 0; i < categories.size(); i++) {
+                if (!this.categories.get(i).equals(game.categories.get(i))) {
+                    sameCategories = false;
+                    break;
+                }
+            }
+        } else {
+            sameCategories = false;
+        }
+
+
+        return (this.id == game.id && this.name.equals(game.name) && this.minPlayers == game.minPlayers && this.maxPlayers == game.maxPlayers &&
+                this.year == game.year && this.playTime == game.playTime && this.thumbnail.equals(game.thumbnail) && this.minPlayerAge == game.minPlayerAge &&
+                this. suggestedMinPlayerAge == game.suggestedMinPlayerAge && sameMechanics && sameCategories);
+    }
 }
