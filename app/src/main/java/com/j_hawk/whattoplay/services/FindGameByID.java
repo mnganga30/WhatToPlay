@@ -14,13 +14,20 @@ import java.util.List;
  * Created by kevin on 10/30/2017.
  */
 
+/**
+ * FindGameByID.java
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ * This class is used to call BoardGameGeek.com api. Takes Integer in execute call and returns a Game
+ * @return Game returns the game found through api call or null if no game was found
+ */
 public class FindGameByID extends AsyncTask<Integer, Void, Game> {
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
+    /**
+     * AsyncTask doInBackground method
+     * @param params List of Integers. Only first is used to hold id passed in exexute method.
+     * @return Game returns the bame found through api call or null if no game was found
+     */
     @Override
     protected Game doInBackground(Integer... params) {
         String urlString= "https://www.boardgamegeek.com/xmlapi2/thing?id=" + params[0];
@@ -44,10 +51,5 @@ public class FindGameByID extends AsyncTask<Integer, Void, Game> {
             Log.e("ERROR", e.getMessage(), e);
             return null;
         }
-    }
-
-    @Override
-    protected void onPostExecute(Game game) {
-        super.onPostExecute(game);
     }
 }

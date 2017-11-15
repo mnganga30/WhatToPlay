@@ -18,7 +18,7 @@ import java.util.TreeSet;
 
 /**
  * DBHelper.java
- * @author Kevin
+ * @author Kevin, Simon, Jian, Martin
  * @version 1.0
  * This class contains helper methods that interact with the Database.
  */

@@ -39,6 +39,11 @@ package com.j_hawk.whattoplay;
 /**
  * This function setup up the adapeter and the ListView of Games
  */
+/**
+ * This page is the activity for setting up the adapter and the ListView of Games
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ */
 public class removeGameActivity extends Activity{
     private DBHelper dbHelper;
     private Toast statusMessage;

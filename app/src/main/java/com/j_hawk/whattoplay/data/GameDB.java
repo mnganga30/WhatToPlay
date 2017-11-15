@@ -6,7 +6,7 @@ import android.provider.BaseColumns;
 
 /**
  * GAMEDB.java
- * @author Kevin
+ * @author Kevin, Simon, Jian, Martin
  * @version 1.0
  * This class sets up the tables and columns for Game Database
  */

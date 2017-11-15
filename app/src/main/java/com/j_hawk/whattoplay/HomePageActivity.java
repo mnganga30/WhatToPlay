@@ -1,11 +1,8 @@
 package com.j_hawk.whattoplay;
 
-
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +12,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,21 +31,19 @@ import android.widget.Toast;
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
 
+/**
+ * This page is the activity for navigating the home screen. Includes main menu and Game Search screen.
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ */
 public class HomePageActivity extends AppCompatActivity {
 
 
@@ -64,6 +58,9 @@ public class HomePageActivity extends AppCompatActivity {
     private static BottomNavigationView navigation;
     private Toast statusMessage;
 
+    /**
+     * Overrides back button functionality. Navigates back to Home screen instead of closing app.
+     */
     @Override
     public void onBackPressed() {
         if (fragmentDisplayed == null) {
@@ -121,8 +118,11 @@ public class HomePageActivity extends AppCompatActivity {
         mViewPager.setAdapter(myPersonalInfoPagerAdapter);
     }
 
-
+    /**
+     * FragmentStatePagerAdapter for PersonalInfoPager
+     */
     public class PersonalInfoPagerAdapter extends FragmentStatePagerAdapter {
+
         public PersonalInfoPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -147,6 +147,9 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fragment for collection management and searching for games
+     */
     public static class PersonalInfoFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
 
@@ -240,6 +243,9 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * FragmentStatePagerAdapter for SearchPager
+     */
     public class SearchPagerAdapter extends FragmentStatePagerAdapter {
         public SearchPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -265,6 +271,9 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fragment for search page
+     */
     public static class SearchFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
         private final List<Game> list = new ArrayList<>();
@@ -359,6 +368,9 @@ public class HomePageActivity extends AppCompatActivity {
                 }return true;}}
         }
 
+    /**
+     * FragmentStatePagerAdapter for HomePager
+     */
     public class HomePagerAdapter extends FragmentStatePagerAdapter {
         public HomePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -384,6 +396,9 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fragment for recommendations page. Not functional yet
+     */
     public static class HomepageFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
         private final List<Game> list = new ArrayList<>();
@@ -417,6 +432,9 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * BaseAdapter for Item
+     */
     public static class ItemAdapter extends BaseAdapter {
         private List<Game> mitem;
         private LayoutInflater minflater;
@@ -446,6 +464,11 @@ public class HomePageActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * Constructor for ItemAdapter
+         * @param inflater LayoutInflater
+         * @param items List<Game>
+         */
         public ItemAdapter(LayoutInflater inflater, List<Game> items) {
             mitem = items;
             minflater = inflater;

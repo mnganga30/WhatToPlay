@@ -15,13 +15,20 @@ import java.util.List;
  * Created by kevin on 10/30/2017.
  */
 
+/**
+ * FindGamesByQuery.java
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ * This class is used to call BoardGameGeek.com api. Takes query String in execute call
+ * @return ArrayList<OnlineGame>> returns the OnlineGames found through api call or null if no games were found
+ */
 public class FindGamesByQuery extends AsyncTask<String, Void, ArrayList<OnlineGame>> {
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
+    /**
+     * AsyncTask doInBackground method
+     * @param params List of Strings. Only first is used to hold query String passed in exexute method.
+     * @return ArrayList<OnlineGame> returns the OnlineGames found through api call or null if no games were found
+     */
     @Override
     protected ArrayList<OnlineGame> doInBackground(String... params) {
         ArrayList<OnlineGame> gameResults;
@@ -45,10 +52,5 @@ public class FindGamesByQuery extends AsyncTask<String, Void, ArrayList<OnlineGa
             Log.e("ERROR", e.getMessage(), e);
             return null;
         }
-    }
-
-    @Override
-    protected void onPostExecute(ArrayList<OnlineGame> onlineGames) {
-        super.onPostExecute(onlineGames);
     }
 }

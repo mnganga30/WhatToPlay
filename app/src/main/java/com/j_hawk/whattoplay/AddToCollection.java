@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +24,11 @@ import java.util.concurrent.ExecutionException;
  * Created by martin on 10/27/2017.
  */
 
+/**
+ * This page is the activity for adding single games to the collection.
+ * @author Kevin, Simon, Jian, Martin
+ * @version 1.0
+ */
 public class AddToCollection extends AppCompatActivity {
 
     private DBHelper dbHelper;
@@ -41,8 +45,20 @@ public class AddToCollection extends AppCompatActivity {
         gameList = (ListView)findViewById(R.id.listView);
     }
 
+    /**
+     * Logic for calling BoardGameGeek.com api when search button is clicked.
+     * Calls addGameToCollection when a game in the list is clicked on and "YES" is selected from dialog.
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @param v - (Given view)
+     */
     public void searchButtonClicked(View v) throws ExecutionException, InterruptedException {
-        final TextView findGameText = (TextView)findViewById(R.id.removeGame);
+        final TextView findGameText = (TextView)findViewById(R.id.findGameTxt);
+        if (findGameText.getText().toString().matches("")) {
+            statusMessage.setText("No search query was entered");
+            statusMessage.show();
+            return;
+        }
         final ArrayList<OnlineGame> gameResults = new FindGamesByQuery().execute(findGameText.getText().toString()).get();
         if (gameResults == null) {
             statusMessage.setText("ERROR: No Games were returned for that search result.");
@@ -82,6 +98,10 @@ public class AddToCollection extends AppCompatActivity {
         }
     }
 
+    /**
+     * Takes a game from private ArrayList and adds it to collection
+     * @param id Integer id for game that is to be added to collection
+     */
     public void addGameToCollection(int id) throws ExecutionException, InterruptedException {
         Game newGame = new FindGameByID().execute(id).get();
         Log.i("test", newGame.toString());
