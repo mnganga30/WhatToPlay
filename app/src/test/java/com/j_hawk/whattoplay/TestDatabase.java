@@ -12,8 +12,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -77,6 +75,7 @@ public class TestDatabase {
         dbHelper.removeGame(111);
         ArrayList<Game> games = dbHelper.getAllGames();
         assertEquals("Added two games and removed one game failed", 1, games.size());
+        assertEquals("Remaining game was not game2", game2, games.get(0));
     }
 
     @Test
