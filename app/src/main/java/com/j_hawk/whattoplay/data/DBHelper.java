@@ -73,6 +73,17 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Deletes all entries in all tables. Only used for unit testing.
+     */
+    public void deleteAllEntries() {
+        Log.i("sql", "Deleting all entries");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ GameDB.GameCollection.TABLE_NAME);
+        db.execSQL("delete from "+ GameDB.GameMechanics.TABLE_NAME);
+        db.execSQL("delete from "+ GameDB.GameCategories.TABLE_NAME);
+    }
+
     //region GameCollection Table Methods
 
     /**
@@ -491,7 +502,7 @@ public class DBHelper extends SQLiteOpenHelper {
             boolean addGame = true;
 
             // check if any mechanics were passes
-            if (mechanics != null) {
+            if (mechanics != null && !mechanics.isEmpty()) {
                 for (String mechanic : mechanics) {
                     if (!mechs.contains(mechanic)) {
                         addGame = false;
@@ -500,7 +511,7 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
             // check if an categories were passed
-            if (categories != null) {
+            if (categories != null && !categories.isEmpty()) {
                 for (String category : categories) {
                     if (!cats.contains(category)) {
                         addGame = false;
