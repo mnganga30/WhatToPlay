@@ -15,7 +15,6 @@ public class OnlineGame {
     private String name;
     private int id;
     private int year;
-
     /**
      * Constructor for an Game. Games will always be constructed this way.
      * @param id Integer ID of the game
@@ -53,6 +52,7 @@ public class OnlineGame {
     public int getYear() {
         return year;
     }
+
 
     /**
      * toString for the OnlineGame
