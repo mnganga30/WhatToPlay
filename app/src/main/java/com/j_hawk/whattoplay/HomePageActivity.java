@@ -289,6 +289,14 @@ public class HomePageActivity extends AppCompatActivity {
             lySearch = (ListView) rootView.findViewById(R.id.searchingresult);
             ImageButton search = (ImageButton) rootView.findViewById(R.id.searchbutton);
             final EditText input = (EditText) rootView.findViewById(R.id.editText);
+            Button filter = (Button) rootView.findViewById(R.id.filter);
+            filter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(getContext(), filterpage.class);
+                    startActivity(mIntent);
+                }
+            });
             Spinner spinner = (Spinner) rootView.findViewById(R.id.searchmode);
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                     R.array.mode, android.R.layout.simple_spinner_item);

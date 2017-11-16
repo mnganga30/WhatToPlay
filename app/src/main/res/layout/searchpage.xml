@@ -48,6 +48,13 @@
             app:srcCompat="@android:drawable/ic_menu_search"
             tools:layout_editor_absoluteY="0dp" />
 
+        <Button
+            android:id="@+id/filter"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_weight="0.73"
+            android:text="filter" />
+
     </LinearLayout>
 
     <ListView
