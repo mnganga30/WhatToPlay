@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -59,6 +60,30 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    /**
+     * Drops and recreates tables. Used for unit testing.
+     */
+    public void rebuildDatabase() {
+        // Delete all tables
+        Log.i("sql", "Rebuilding DB");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(GameDB.GameCollection.DROP_TABLE);
+        db.execSQL((GameDB.GameMechanics.DROP_TABLE));
+        db.execSQL(GameDB.GameCategories.DROP_TABLE);
+        onCreate(db);
+    }
+
+    /**
+     * Deletes all entries in all tables. Only used for unit testing.
+     */
+    public void deleteAllEntries() {
+        Log.i("sql", "Deleting all entries");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ GameDB.GameCollection.TABLE_NAME);
+        db.execSQL("delete from "+ GameDB.GameMechanics.TABLE_NAME);
+        db.execSQL("delete from "+ GameDB.GameCategories.TABLE_NAME);
+    }
+
     //region GameCollection Table Methods
 
     /**
@@ -82,8 +107,13 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE, game.getSuggestedMinPlayerAge());
         values.put(GameDB.GameCollection.COLUMN_NAME_RECOMMENDED_PLAYERS, game.getRecommendedPlayers());
         values.put(GameDB.GameCollection.COLUMN_NAME_DESCRIPTION, game.getDescription());
-        dbRow = db.insertWithOnConflict(GameDB.GameCollection.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        try {
+            dbRow = db.insertWithOnConflict(GameDB.GameCollection.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_ABORT);
+        } catch (SQLiteException e) {
+            return -1;
+        }
 
+        Log.i("test", "" + dbRow);
         if (dbRow != -1) {
             for (String mechanic : game.getMechanics()) {
                 values.clear();
@@ -174,7 +204,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return ArrayList of the mechanics
      * @since 2.0
      */
-    private ArrayList<String> getMechanics (int id) {
+    public ArrayList<String> getMechanics (int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -210,7 +240,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * @return ArrayList of the mechanics
      * @since 2.0
      */
-    private ArrayList<String> getCategories (int id) {
+    public ArrayList<String> getCategories (int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -324,14 +354,31 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * This function will get all games from the GameCollection table that meet the passed filters
-     * @param numOfPlayers The number players participating.
-     * @return A sorted ArrayList of Games from the Database
-     * @since 1.0
+     * This function will get all games from the GameCollection table that meet the passed filters. Parameters can be passed as null if no filtering is desired
+     * on that parameter.
+     * @param numOfPlayers The number players participating as an Integer.
+     * @param bggNumPlayers Boolean used to determine if search will use manufacturer (false) or BGG (true) player count recommendation.
+     *                      Must pass true or false if numPlayers is not null.
+     * @param playingTime String representing playing time. Only accepts "0-60", "60-120", or "120+". Otherwise will return null.
+     * @param minPlayerAge Integer representing the minimum player age.
+     * @param bggPlayerAge Boolean used to determine if search will use manufacturer (false) or BGG (true) player age recommendation.
+     *                     Must pass true or false if numPlayers is not null.
+     * @param mechanics ArrayList of Strings containing all mechanics to be filtered against. Game must contain all mechanics to be returned.
+     * @param categories ArrayList of Strings containing all categories to be filtered against. Game must contain all categories to be returned.
+     * @return A sorted ArrayList of Games from the Database or null if no or incoreect parameters passed.
+     * @since 2.0
      */
-    public ArrayList<Game> getGamesByFilter(Integer numOfPlayers, boolean bggNumPlayers, String playingTime,
-                                            String minPlayerAge, boolean bggPlayerAge,
+    public ArrayList<Game> getGamesByFilter(Integer numOfPlayers, Boolean bggNumPlayers, String playingTime,
+                                            Integer minPlayerAge, Boolean bggPlayerAge,
                                             ArrayList<String> mechanics, ArrayList<String> categories) {
+
+        // validate parameters
+        // check if Boolean is passed with corresponding Integer
+        if ((numOfPlayers != null && bggNumPlayers == null) || (minPlayerAge != null && bggPlayerAge == null)) return null;
+        // make sure at least one parameter was passed
+        if (numOfPlayers == null && playingTime == null && minPlayerAge == null &&
+                (mechanics == null || mechanics.size() == 0) && (categories == null || categories.size() == 0)) return null;
+
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -349,10 +396,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 GameDB.GameCollection.COLUMN_NAME_DESCRIPTION
         };
 
+        //sort order
         String sortOrderGame = GameDB.GameCollection.COLUMN_NAME_GAME_NAME + " COLLATE NOCASE ASC";
+
+        // array list to returned games
         ArrayList<String> whereClasue = new ArrayList<>();
+
+        // string to hold arguments to be passed to sql
         String args = "";
+
+        // track the number of arguments that were passed
         int numOfArgs = 0;
+
+        // check numOfPlayers parameter
         if (numOfPlayers != null) {
             numOfArgs++;
             if (!bggNumPlayers) {
@@ -365,7 +421,10 @@ public class DBHelper extends SQLiteOpenHelper {
             }
 
         }
+
+        // check playing time
         if (playingTime != null) {
+            // link with and if not first argument
             if (numOfArgs != 0) {
                 args += " AND ";
             }
@@ -379,20 +438,22 @@ public class DBHelper extends SQLiteOpenHelper {
                 whereClasue.add("120");
                 numOfArgs += 2;
                 args += GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " >= ? AND " + GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " <= ?";
-            } else {
+            } else if (playingTime.equals("120+")){
                 whereClasue.add("120");
                 numOfArgs++;
                 args += GameDB.GameCollection.COLUMN_NAME_PLAY_TIME + " >= ?";
+            } else {
+                return null;
             }
 
         }
 
+        // check player age
         if (minPlayerAge != null) {
 
             if (numOfArgs != 0) {
                 args += " AND ";
             }
-
             numOfArgs++;
 
             if (!bggPlayerAge) {
@@ -400,12 +461,10 @@ public class DBHelper extends SQLiteOpenHelper {
             } else {
                 args += GameDB.GameCollection.COLUMN_NAME_SUGGESTED_AGE + " <= ?";
             }
-            if (!minPlayerAge.equals("5") && !minPlayerAge.equals("10") && !minPlayerAge.equals("15") && !minPlayerAge.equals("18") && !minPlayerAge.equals("21")) {
-                return null;
-            }
-            whereClasue.add(minPlayerAge);
+            whereClasue.add(String.valueOf(minPlayerAge));
         }
 
+        // build where clause array
         String[] where = new String[whereClasue.size()];
         where = whereClasue.toArray(where);
 
@@ -439,8 +498,11 @@ public class DBHelper extends SQLiteOpenHelper {
             Game game = new Game(id, name, minPlayers, maxPlayers, year, playTime, thumbnail,
                     playerAge, suggestedMinPlayerAge, cats, mechs,
                     recommendedPlayers, description);
+
             boolean addGame = true;
-            if (mechanics != null) {
+
+            // check if any mechanics were passes
+            if (mechanics != null && !mechanics.isEmpty()) {
                 for (String mechanic : mechanics) {
                     if (!mechs.contains(mechanic)) {
                         addGame = false;
@@ -448,7 +510,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 }
             }
 
-            if (categories != null) {
+            // check if an categories were passed
+            if (categories != null && !categories.isEmpty()) {
                 for (String category : categories) {
                     if (!cats.contains(category)) {
                         addGame = false;
