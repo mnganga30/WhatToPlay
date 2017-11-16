@@ -1,5 +1,8 @@
 package com.j_hawk.whattoplay;
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +15,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +34,9 @@ import android.widget.Toast;
 
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
+import com.j_hawk.whattoplay.data.OnlineGame;
+import com.j_hawk.whattoplay.services.FindGameByID;
+import com.j_hawk.whattoplay.services.FindHotItems;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
+import static com.j_hawk.whattoplay.R.id.container;
 
 /**
  * This page is the activity for navigating the home screen. Includes main menu and Game Search screen.
@@ -57,6 +65,7 @@ public class HomePageActivity extends AppCompatActivity {
     private static final String PERSONAL_FRAG = "PersonalPage";
     private static BottomNavigationView navigation;
     private Toast statusMessage;
+
 
     /**
      * Overrides back button functionality. Navigates back to Home screen instead of closing app.
@@ -378,7 +387,14 @@ public class HomePageActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int i) {
-            Fragment fragment = new HomepageFragment();
+            Fragment fragment = null;
+            try {
+                fragment = new HomepageFragment();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Bundle args = new Bundle();
             args.putInt(HomepageFragment.ARG_OBJECT, i + 1);
             fragment.setArguments(args);
@@ -401,37 +417,28 @@ public class HomePageActivity extends AppCompatActivity {
      */
     public static class HomepageFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
-        private final List<Game> list = new ArrayList<>();
-        private ItemAdapter mItemAdapter;
+        private final List<OnlineGame> list = new FindHotItems().execute().get();
+        private ItemAdapter2 mItemAdapter;
         private ListView lyHome = null;
+        private DBHelper dbHelper;
+        private Toast statusMessage;
+
+
+
+        public HomepageFragment() throws ExecutionException, InterruptedException {
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
+
+            dbHelper = new DBHelper(getActivity());
+            statusMessage = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            Game first = new Game(10, "Game Name", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game second = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game third = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game forth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game fifth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game sixth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game seventh = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game eighth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game ninth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            Game tenth = new Game(10, "used for testing", 1, 5, 2010, 5,"https://cf.geekdo-images.com/images/pic2437596_t.jpg");
-            list.add(first);
-            list.add(second);
-            list.add(third);
-            list.add(forth);
-            list.add(fifth);
-            list.add(sixth);
-            list.add(seventh);
-            list.add(eighth);
-            list.add(ninth);
-            list.add(tenth);
-            mItemAdapter = new ItemAdapter(inflater, list);
+            mItemAdapter = new ItemAdapter2(inflater, list);
             lyHome = (ListView) rootView.findViewById(R.id.recommlist);
             Bundle args = getArguments();
             return rootView;
@@ -440,14 +447,55 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+
             lyHome.setAdapter(mItemAdapter);
             lyHome.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    // Item currentItem = adapter.getItem(position);
+                  final OnlineGame currentItem = mItemAdapter.getItem(position);
                     // (...)
+
+                    dialog.setTitle("Add "+ currentItem.getName()+" To Collection")
+                            .setMessage("Would you like to add " + currentItem.getName() + " to your collection?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    try {
+                                        addHotGameToCollection(currentItem.getId());
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            });
+                    //.setIcon(android.R.drawable.ic_dialog_alert);
+                    final AlertDialog alertDialog = dialog.show();
+                    if (!alertDialog.isShowing()) alertDialog.dismiss();
                 }
             });
+        }
+
+        /**
+         * Takes a game from private ArrayList and adds it to collection
+         * @param id Integer id for game that is to be added to collection
+         */
+        public  void addHotGameToCollection(int id) throws ExecutionException, InterruptedException {
+            Game newGame = new FindGameByID().execute(id).get();
+            Log.i("test", newGame.toString());
+            long result = dbHelper.addGame(newGame);
+            if (result != -1) {
+                statusMessage.setText("Game Succesfully Added To Collection!");
+            } else {
+                statusMessage.setText("ERROR: Game is already in your collection");
+            }
+            statusMessage.show();
         }
 
     }
@@ -494,6 +542,7 @@ public class HomePageActivity extends AppCompatActivity {
             minflater = inflater;
         }
 
+
         @Override
         public int getCount() {
             return mitem.size();
@@ -536,6 +585,93 @@ public class HomePageActivity extends AppCompatActivity {
             return viewInformation;
         }
     }
+
+
+
+    public static class ItemAdapter2 extends BaseAdapter {
+        private List<OnlineGame> mitem;
+        private LayoutInflater minflater;
+        private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Bitmap doInBackground(String... URL) {
+                String imageURL = URL[0];
+                Bitmap bitmap = null;
+                try {
+                    InputStream input = new java.net.URL(imageURL).openStream();
+                    bitmap = BitmapFactory.decodeStream(input);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return bitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                //image.setImageBitmap(result);
+            }
+        }
+
+        /**
+         * Constructor for ItemAdapter
+         * @param inflater LayoutInflater
+         * @param items List<OnlineGame>
+         */
+        public ItemAdapter2(LayoutInflater inflater, List<OnlineGame> items) {
+            mitem = items;
+            minflater = inflater;
+        }
+
+
+        @Override
+        public int getCount() {
+            return mitem.size();
+        }
+
+
+        public String getName(int i) {
+            return mitem.get(i).getName();
+        }
+
+        @Override
+        public OnlineGame getItem(int i) {
+            return mitem.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            View viewInformation = minflater.inflate(R.layout.hotview_item, null);
+            OnlineGame item = mitem.get(i);
+            TextView title = viewInformation.findViewById(R.id.hotListTitle);
+            TextView year = viewInformation.findViewById(R.id.hotListYear);
+            ImageView image = viewInformation.findViewById(R.id.hotListImage);
+            title.setText(item.getName());
+            year.setText("[" + Integer.toString(item.getYear()) + "]");
+
+
+            try {
+                image.setImageBitmap(new DownloadImage().execute(item.getThumbnail()).get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return viewInformation;
+        }
+    }
+
+
+
 
 }
 
