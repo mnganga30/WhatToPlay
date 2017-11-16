@@ -597,7 +597,6 @@ public class HomePageActivity extends AppCompatActivity {
             TextView url = viewInformation.findViewById(R.id.url);
             title.setText(item.getName());
             year.setText("[" + Integer.toString(item.getYear()) + "]");
-            url.setText("[" + item.getThumbnail() + "]");
 
 
             try {
