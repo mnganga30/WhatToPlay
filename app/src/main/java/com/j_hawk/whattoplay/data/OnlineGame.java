@@ -15,6 +15,8 @@ public class OnlineGame {
     private String name;
     private int id;
     private int year;
+    private String thumbnail;
+
     /**
      * Constructor for an Game. Games will always be constructed this way.
      * @param id Integer ID of the game
@@ -25,8 +27,22 @@ public class OnlineGame {
         this.id=id;
         this.name =name;
         this.year = year;
+        this.thumbnail = null;
     }
 
+    /**
+     * Constructor for an Game. Use only for the Hot Games
+     * @param id Integer ID of the game
+     * @param name String name of the game
+     * @param year Integer year the game was published
+     * @param thumbnail string  url of the Image.
+     */
+    public OnlineGame(int id, String name, int year, String thumbnail) {
+        this.id=id;
+        this.name =name;
+        this.year = year;
+        this.thumbnail = thumbnail;
+    }
     /**
      * Getter for the OnlineGame id
      * @return Integer id
@@ -62,4 +78,7 @@ public class OnlineGame {
     public String toString() {
         return name + "\n" + year;
     }
+
+
+    public String getThumbnail() {return thumbnail;}
 }

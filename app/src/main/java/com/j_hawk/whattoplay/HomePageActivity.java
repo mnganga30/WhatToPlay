@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
+import com.j_hawk.whattoplay.data.OnlineGame;
+import com.j_hawk.whattoplay.services.FindHotItems;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -378,7 +380,14 @@ public class HomePageActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int i) {
-            Fragment fragment = new HomepageFragment();
+            Fragment fragment = null;
+            try {
+                fragment = new HomepageFragment();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Bundle args = new Bundle();
             args.putInt(HomepageFragment.ARG_OBJECT, i + 1);
             fragment.setArguments(args);
@@ -401,9 +410,12 @@ public class HomePageActivity extends AppCompatActivity {
      */
     public static class HomepageFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
-        private final List<Game> list = new ArrayList<>();
-        private ItemAdapter mItemAdapter;
+        private final List<OnlineGame> list = new FindHotItems().execute().get();
+        private ItemAdapter2 mItemAdapter;
         private ListView lyHome = null;
+
+        public HomepageFragment() throws ExecutionException, InterruptedException {
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater,
@@ -411,7 +423,7 @@ public class HomePageActivity extends AppCompatActivity {
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            mItemAdapter = new ItemAdapter(inflater, list);
+            mItemAdapter = new ItemAdapter2(inflater, list);
             lyHome = (ListView) rootView.findViewById(R.id.recommlist);
             Bundle args = getArguments();
             return rootView;
@@ -474,6 +486,7 @@ public class HomePageActivity extends AppCompatActivity {
             minflater = inflater;
         }
 
+
         @Override
         public int getCount() {
             return mitem.size();
@@ -506,6 +519,87 @@ public class HomePageActivity extends AppCompatActivity {
             if(item.getPlayTime() == 0){
             time.setText("Not Sure Game time");
             }else{time.setText(Integer.toString(item.getPlayTime()) + " mins");}
+            try {
+                image.setImageBitmap(new DownloadImage().execute(item.getThumbnail()).get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return viewInformation;
+        }
+    }
+
+
+
+    public static class ItemAdapter2 extends BaseAdapter {
+        private List<OnlineGame> mitem;
+        private LayoutInflater minflater;
+        private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Bitmap doInBackground(String... URL) {
+                String imageURL = URL[0];
+                Bitmap bitmap = null;
+                try {
+                    InputStream input = new java.net.URL(imageURL).openStream();
+                    bitmap = BitmapFactory.decodeStream(input);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return bitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                //image.setImageBitmap(result);
+            }
+        }
+
+        /**
+         * Constructor for ItemAdapter
+         * @param inflater LayoutInflater
+         * @param items List<OnlineGame>
+         */
+        public ItemAdapter2(LayoutInflater inflater, List<OnlineGame> items) {
+            mitem = items;
+            minflater = inflater;
+        }
+
+
+        @Override
+        public int getCount() {
+            return mitem.size();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            View viewInformation = minflater.inflate(R.layout.hotview_item, null);
+            OnlineGame item = mitem.get(i);
+            TextView title = viewInformation.findViewById(R.id.hotListTitle);
+            TextView year = viewInformation.findViewById(R.id.hotListYear);
+            ImageView image = viewInformation.findViewById(R.id.hotListImage);
+            TextView url = viewInformation.findViewById(R.id.url);
+            title.setText(item.getName());
+            year.setText("[" + Integer.toString(item.getYear()) + "]");
+            url.setText("[" + item.getThumbnail() + "]");
+
+
             try {
                 image.setImageBitmap(new DownloadImage().execute(item.getThumbnail()).get());
             } catch (InterruptedException e) {

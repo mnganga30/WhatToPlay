@@ -103,17 +103,17 @@ public class ParserHotItems {
                 yearPublished = Integer.parseInt(parser.getAttributeValue(null,"value"));
                 parser.nextTag();
             }
-//            else if(name.equals("thumbnail"))
-//            {
-//                parser.next();
-//                thumbnail = parser.getText();
-//                parser.nextTag();
-//            }
+            else if(name.equals("thumbnail"))
+            {
+                parser.next();
+                thumbnail = parser.getText();
+                parser.nextTag();
+            }
             else {
                 skip(parser);
             }
         }
-        return new OnlineGame(id, gameName, yearPublished);
+        return new OnlineGame(id, gameName, yearPublished, thumbnail);
     }
 
 
