@@ -1,5 +1,8 @@
 package com.j_hawk.whattoplay;
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +15,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +35,7 @@ import android.widget.Toast;
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
 import com.j_hawk.whattoplay.data.OnlineGame;
+import com.j_hawk.whattoplay.services.FindGameByID;
 import com.j_hawk.whattoplay.services.FindHotItems;
 
 import java.io.InputStream;
@@ -40,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
+import static com.j_hawk.whattoplay.R.id.container;
 
 /**
  * This page is the activity for navigating the home screen. Includes main menu and Game Search screen.
@@ -59,6 +65,7 @@ public class HomePageActivity extends AppCompatActivity {
     private static final String PERSONAL_FRAG = "PersonalPage";
     private static BottomNavigationView navigation;
     private Toast statusMessage;
+
 
     /**
      * Overrides back button functionality. Navigates back to Home screen instead of closing app.
@@ -421,6 +428,10 @@ public class HomePageActivity extends AppCompatActivity {
         private final List<OnlineGame> list = new FindHotItems().execute().get();
         private ItemAdapter2 mItemAdapter;
         private ListView lyHome = null;
+        private DBHelper dbHelper;
+        private Toast statusMessage;
+
+
 
         public HomepageFragment() throws ExecutionException, InterruptedException {
         }
@@ -428,6 +439,10 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
+
+            dbHelper = new DBHelper(getActivity());
+            statusMessage = Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
+
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
@@ -440,14 +455,55 @@ public class HomePageActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+
             lyHome.setAdapter(mItemAdapter);
             lyHome.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    // Item currentItem = adapter.getItem(position);
+                  final OnlineGame currentItem = mItemAdapter.getItem(position);
                     // (...)
+
+                    dialog.setTitle("Add "+ currentItem.getName()+" To Collection")
+                            .setMessage("Would you like to add " + currentItem.getName() + " to your collection?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    try {
+                                        addHotGameToCollection(currentItem.getId());
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            });
+                    //.setIcon(android.R.drawable.ic_dialog_alert);
+                    final AlertDialog alertDialog = dialog.show();
+                    if (!alertDialog.isShowing()) alertDialog.dismiss();
                 }
             });
+        }
+
+        /**
+         * Takes a game from private ArrayList and adds it to collection
+         * @param id Integer id for game that is to be added to collection
+         */
+        public  void addHotGameToCollection(int id) throws ExecutionException, InterruptedException {
+            Game newGame = new FindGameByID().execute(id).get();
+            Log.i("test", newGame.toString());
+            long result = dbHelper.addGame(newGame);
+            if (result != -1) {
+                statusMessage.setText("Game Succesfully Added To Collection!");
+            } else {
+                statusMessage.setText("ERROR: Game is already in your collection");
+            }
+            statusMessage.show();
         }
 
     }
@@ -585,9 +641,14 @@ public class HomePageActivity extends AppCompatActivity {
             return mitem.size();
         }
 
+
+        public String getName(int i) {
+            return mitem.get(i).getName();
+        }
+
         @Override
-        public Object getItem(int i) {
-            return null;
+        public OnlineGame getItem(int i) {
+            return mitem.get(i);
         }
 
         @Override
@@ -616,6 +677,9 @@ public class HomePageActivity extends AppCompatActivity {
             return viewInformation;
         }
     }
+
+
+
 
 }
 
