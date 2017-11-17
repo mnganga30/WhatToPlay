@@ -62,4 +62,13 @@ public class OnlineGame {
     public String toString() {
         return name + "\n" + year;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OnlineGame)) return false;
+
+        OnlineGame game = (OnlineGame) obj;
+
+        return (this.id == game.id && this.name.equals(game.name) && this.year == game.year);
+    }
 }

@@ -22,15 +22,39 @@ import static org.junit.Assert.*;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class TestParserGame {
 
-    ParserGame parser = new ParserGame();
-    List<Game> results;
-    String input;
-    InputStream inputStream;
-    Game expectedGame;
+    private ParserGame parser = new ParserGame();
+    private List<Game> results;
+    private InputStream inputStream;
+    private Game expectedGame;
+
+    @Test
+    public void test_parse_does_not_throw_exception() {
+        try {
+            results = parser.parse(inputStream);
+        } catch (XmlPullParserException e) {
+            assertTrue("Parser threw XmlPullParserException", false);
+        } catch (IOException e) {
+            assertTrue("Parser threw IOException", false);
+        }
+    }
+
+    @Test
+    public void test_game_is_read_correctly() {
+        try {
+            results = parser.parse(inputStream);
+            assertEquals("Exactly 1 game was not returned from parser", 1, results.size());
+            Game resultGame = results.get(0);
+            assertEquals("Returned game did not match expected game", expectedGame, resultGame);
+        } catch (XmlPullParserException e) {
+            assertTrue("Parser threw XmlPullParserException", false);
+        } catch (IOException e) {
+            assertTrue("Parser threw IOException", false);
+        }
+    }
 
     @Before
     public void setup() {
-        input = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        String input = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<items termsofuse=\"http://boardgamegeek.com/xmlapi/termsofuse\">\n" +
                 "    <item type=\"boardgame\" id=\"68448\">\n" +
                 "        <thumbnail>https://cf.geekdo-images.com/images/pic860217_t.jpg</thumbnail>\n" +
@@ -203,30 +227,5 @@ public class TestParserGame {
         expectedGame = new Game(68448, "7 Wonders", 2, 7, 2010, 30, "https://cf.geekdo-images.com/images/pic860217_t.jpg",
                 10, 10, categories, mechanics, 4, desricption);
 
-    }
-
-    @Test
-    public void test_parse_does_not_throw_exception() {
-        try {
-            results = parser.parse(inputStream);
-        } catch (XmlPullParserException e) {
-            assertTrue("Parser threw XmlPullParserException", false);
-        } catch (IOException e) {
-            assertTrue("Parser threw IOException", false);
-        }
-    }
-
-    @Test
-    public void test_game_is_read_correctly() {
-        try {
-            results = parser.parse(inputStream);
-            assertEquals("Exactly 1 game was not returned from parser", 1, results.size());
-            Game resultGame = results.get(0);
-            assertEquals("Returned game did not match expected game", expectedGame, resultGame);
-        } catch (XmlPullParserException e) {
-            assertTrue("Parser threw XmlPullParserException", false);
-        } catch (IOException e) {
-            assertTrue("Parser threw IOException", false);
-        }
     }
 }
