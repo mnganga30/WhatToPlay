@@ -141,6 +141,7 @@
                 android:id="@+id/mechenicsTT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:elevation="3dp"
                 android:text="             Mechenics"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
@@ -153,6 +154,7 @@
                 android:id="@+id/category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:elevation="10dp"
                 android:text="               Category"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 

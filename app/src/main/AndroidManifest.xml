@@ -19,10 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddToCollection"></activity>
+        <activity android:name=".AddToCollection" />
         <activity android:name=".removeGameActivity" />
         <activity android:name=".ImportCollection" />
-        <activity android:name=".filterpage"></activity>
+        <activity android:name=".filterpage" />
+        <activity android:name=".filterResult"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.j_hawk.whattoplay;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,28 +13,33 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 
 
 import com.j_hawk.whattoplay.data.DBHelper;
+import com.j_hawk.whattoplay.data.Game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
 public class filterpage extends AppCompatActivity {
 
     private DBHelper dbHelper;
+    private ArrayList<String> mechanicslist;
+    private ArrayList<String> categorieslist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.localsearching);
         dbHelper = new DBHelper(getApplicationContext());
-        ArrayList<String> mechanics =  dbHelper.getAllMechanics();
-        ArrayList<String> categories = dbHelper.getAllCategories();
-        for(int i = 0; i < mechanics.size(); i++){
-            Log.i("abc",mechanics.get(i));
-        }
+        final ArrayList<String> mechanics =  dbHelper.getAllMechanics();
+        final ArrayList<String> categories = dbHelper.getAllCategories();
+
+        mechanicslist = new ArrayList<String>();
+        categorieslist = new ArrayList<String>();
         LayoutInflater Minflater = getLayoutInflater();
         LayoutInflater Cinflater = getLayoutInflater();
         Context context = getBaseContext();
@@ -65,49 +71,54 @@ public class filterpage extends AppCompatActivity {
         mechanlv.setAdapter(myMitemadapter);
         Button searchGO = (Button) findViewById(R.id.start);
 
-        Spinner numberofplayer = (Spinner) findViewById(R.id.numberofplayer);
+        final Spinner numberofplayer = (Spinner) findViewById(R.id.numberofplayer);
         ArrayAdapter<CharSequence> adapter_players = ArrayAdapter.createFromResource(context,
                 R.array.number, android.R.layout.simple_spinner_item);
         adapter_players.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         numberofplayer.setAdapter(adapter_players);
 
-        Spinner age = (Spinner) findViewById(R.id.age);
+        final Spinner age = (Spinner) findViewById(R.id.age);
         ArrayAdapter<CharSequence> adapter_age = ArrayAdapter.createFromResource(context,
                 R.array.age, android.R.layout.simple_spinner_item);
         adapter_age.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         age.setAdapter(adapter_age);
 
-        Spinner time = (Spinner) findViewById(R.id.time);
+        final Spinner time = (Spinner) findViewById(R.id.time);
         ArrayAdapter<CharSequence> adapter_time = ArrayAdapter.createFromResource(context,
                 R.array.time, android.R.layout.simple_spinner_item);
         adapter_time.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         time.setAdapter(adapter_time);
 
-        CheckBox numberRecomm = (CheckBox) findViewById(R.id.numberrecomm);
-        numberRecomm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        final CheckBox numberRecomm = (CheckBox) findViewById(R.id.numberrecomm);
+        final CheckBox ageRecomm = (CheckBox) findViewById(R.id.agerecomm);
 
-            }
-        });
-        CheckBox ageRecomm = (CheckBox) findViewById(R.id.agerecomm);
         searchGO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<Game> gamefilter = dbHelper.getGamesByFilter(Integer.parseInt(numberofplayer.getSelectedItem().toString()),
+                                                                        numberRecomm.isChecked(),time.getSelectedItem().toString(),
+                                                                    Integer.parseInt(age.getSelectedItem().toString()),ageRecomm.isChecked(),
+                                                                    mechanicslist,categorieslist);
+                for(int i = 0; i < gamefilter.size(); i++){
+                    Log.i("game",gamefilter.get(i).toString());
+                }
+                Intent intent = new Intent();
+                intent.setClass(filterpage.this, filterResult.class);
+                intent.putExtra("resultList",(Serializable) gamefilter);
+                startActivity(intent);
+                gamefilter.clear();
                 finish();
             }
         });
 
     }
-    public static class MechanicsItemAdapter extends BaseAdapter {
+    public class MechanicsItemAdapter extends BaseAdapter {
         private ArrayList<String> mitem;
         private LayoutInflater minflater;
-        private boolean check;
 
         public MechanicsItemAdapter(LayoutInflater inflater, ArrayList<String> items) {
             mitem = items;
             minflater = inflater;
-            check = false;
 
         }
 
@@ -129,14 +140,25 @@ public class filterpage extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View viewInformation = minflater.inflate(R.layout.checkbox_item, null);
-            String item = mitem.get(i);
+            final String item = mitem.get(i);
             CheckBox cb = viewInformation.findViewById(R.id.type);
             cb.setText(item);
-            check = cb.isChecked();
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        mechanicslist.add(item);
+                        Log.i("abc","add one");
+                    }else {
+                        mechanicslist.remove(item);
+                        Log.i("abc","remove it");
+                    }
+                }
+            });
             return viewInformation;
         }
     }
-    public static class CategoriesItemAdapter extends BaseAdapter {
+    public class CategoriesItemAdapter extends BaseAdapter {
         private ArrayList<String> mitem;
         private LayoutInflater minflater;
 
@@ -164,9 +186,21 @@ public class filterpage extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             View viewInformation = minflater.inflate(R.layout.checkbox_item, null);
-            String item = mitem.get(i);
+            final String item = mitem.get(i);
             CheckBox cb = viewInformation.findViewById(R.id.type);
-            cb.setText(item.toString());
+            cb.setText(item);
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        categorieslist.add(item);
+                        Log.i("abc","add one");
+                    }else {
+                        categorieslist.remove(item);
+                        Log.i("abc","remove it");
+                    }
+                }
+            });
 
             return viewInformation;
         }
