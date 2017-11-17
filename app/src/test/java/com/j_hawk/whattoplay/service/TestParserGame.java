@@ -1,5 +1,6 @@
-package com.j_hawk.whattoplay;
+package com.j_hawk.whattoplay.service;
 
+import com.j_hawk.whattoplay.BuildConfig;
 import com.j_hawk.whattoplay.data.Game;
 import com.j_hawk.whattoplay.services.ParserGame;
 
