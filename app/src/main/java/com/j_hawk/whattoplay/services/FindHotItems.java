@@ -41,7 +41,7 @@ import java.util.List;
                 }
                 try {
                     InputStream in = urlConnection.getInputStream();
-                    ParserGameList parser = new ParserGameList();
+                    ParserHotItems parser = new ParserHotItems();
                     List<OnlineGame> gameList = parser.parse(in);
                     hotItemsResults = new ArrayList<>(gameList);
                     return hotItemsResults;

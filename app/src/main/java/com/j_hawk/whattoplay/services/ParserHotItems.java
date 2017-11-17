@@ -83,64 +83,67 @@ public class ParserHotItems {
 // to their respective "read" methods for processing. Otherwise, skips the tag.
     private OnlineGame readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, ns, "item");
-        //String gameName = null;
-         id = Integer.parseInt(parser.getAttributeValue(null, "id"));
-    //    int rank = Integer.parseInt(parser.getAttributeValue(null, "rank"));;
-
+        String gameName = null;
+        int id = Integer.parseInt(parser.getAttributeValue(null, "id"));
+        int yearPublished = 0;
 
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("name")) {
-                parser.next();
-                gameName = parser.getAttributeValue(null,"value");
-                parser.nextTag();
+            if (name.equals("thumbnail")) {
+                thumbnail = readImageUrl(parser);
+            } else if (name.equals("name")) {
+                gameName = readGameName(parser);
+            } else if(name.equals("yearpublished")){
+                yearPublished = readPublicationYear(parser);
             }
-            else if (name.equals("yearpublished")) {
-                parser.next();
-                yearPublished = Integer.parseInt(parser.getAttributeValue(null,"value"));
-                parser.nextTag();
-            }
-//            else if(name.equals("thumbnail"))
-//            {
-//                parser.next();
-//                thumbnail = parser.getText();
-//                parser.nextTag();
-//            }
-            else {
+            else{
                 skip(parser);
             }
         }
-        return new OnlineGame(id, gameName, yearPublished);
+        return new OnlineGame(id, gameName, yearPublished, thumbnail);
     }
 
 
-//    // Processes link tags in the Game Name.
-//    private String readGameName(XmlPullParser parser) throws IOException, XmlPullParserException {
-//        String game = "";
-//        parser.require(XmlPullParser.START_TAG, ns, "name");
-//        String tag = parser.getName();
-//        if (tag.equals("name")) {
-//            game = parser.getAttributeValue(null, "value");
-//            parser.nextTag();
-//        }
-//        return game;
-////    }
-//
-//    // Processes link tags in the Game Name.
-//    private int readPublicationYear(XmlPullParser parser) throws IOException, XmlPullParserException {
-//        //int year = 0000;
-//        parser.require(XmlPullParser.START_TAG, ns, "yearpublished");
-//        String tag = parser.getName();
-//        if (tag.equals("yearpublished")) {
-//            yearPublished = Integer.parseInt(parser.getAttributeValue(null, "value"));;
-//            parser.nextTag();
-//        }
-//        return yearPublished;
-//    }
+    // Processes link tags in the Game Name.
+    private String readGameName(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String game = "";
+        parser.require(XmlPullParser.START_TAG, ns, "name");
+        String tag = parser.getName();
+        if (tag.equals("name")) {
+            game = parser.getAttributeValue(null, "value");
+            parser.nextTag();
+        }
+        return game;
+    }
 
+    // Processes link tags in the Game Name.
+    private String readImageUrl(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String image = "";
+        parser.require(XmlPullParser.START_TAG, ns, "thumbnail");
+        String tag = parser.getName();
+        if (tag.equals("thumbnail")) {
+            image = parser.getAttributeValue(null, "value");
+            parser.nextTag();
+        }
+        return image;
+    }
+
+
+    // Processes link tags in the Game Name.
+    private int readPublicationYear(XmlPullParser parser) throws IOException, XmlPullParserException {
+        int year = 0000;
+        parser.require(XmlPullParser.START_TAG, ns, "yearpublished");
+        String tag = parser.getName();
+        String gameType = parser.getAttributeValue(null, "type");
+        if (tag.equals("yearpublished")) {
+            year = Integer.parseInt(parser.getAttributeValue(null, "value"));;
+            parser.nextTag();
+        }
+        return year;
+    }
 
 
     private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -160,6 +163,6 @@ public class ParserHotItems {
         }
     }
 
-
-
 }
+
+

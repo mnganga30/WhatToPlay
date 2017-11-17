@@ -4,6 +4,7 @@ package com.j_hawk.whattoplay.data;
  * Created by kevin on 10/24/2017.
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  * @version 2.0
  * This class holds the shape for all games that the GameDB holds.
  */
-public class Game {
+public class Game implements Serializable {
     private int id;
     private String name;
     private int minPlayers;
