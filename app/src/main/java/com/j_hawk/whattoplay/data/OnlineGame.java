@@ -69,6 +69,8 @@ public class OnlineGame {
         return year;
     }
 
+    public String getThumbnail() {return thumbnail;}
+
 
     /**
      * toString for the OnlineGame
@@ -80,5 +82,13 @@ public class OnlineGame {
     }
 
 
-    public String getThumbnail() {return thumbnail;}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OnlineGame)) return false;
+
+        OnlineGame game = (OnlineGame) obj;
+
+        return (this.id == game.id && this.name.equals(game.name) && this.year == game.year && this.thumbnail.equals(game.thumbnail));
+    }
 }
