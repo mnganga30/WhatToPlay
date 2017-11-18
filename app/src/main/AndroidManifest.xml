@@ -23,7 +23,9 @@
         <activity android:name=".removeGameActivity" />
         <activity android:name=".ImportCollection" />
         <activity android:name=".filterpage" />
-        <activity android:name=".filterResult"></activity>
+        <activity android:name=".filterResult"/>
+            <activity android:name=".ViewGame"/>
+
     </application>
 
 </manifest>
