@@ -89,6 +89,7 @@ public class OnlineGame {
 
         OnlineGame game = (OnlineGame) obj;
 
-        return (this.id == game.id && this.name.equals(game.name) && this.year == game.year && this.thumbnail.equals(game.thumbnail));
+        return (this.id == game.id && this.name.equals(game.name) && this.year == game.year &&
+                ((this.thumbnail == null && game.thumbnail == null) || this.thumbnail.equals(game.thumbnail)));
     }
 }

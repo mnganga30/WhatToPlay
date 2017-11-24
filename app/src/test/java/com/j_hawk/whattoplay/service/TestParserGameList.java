@@ -17,7 +17,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
@@ -26,7 +27,7 @@ public class TestParserGameList {
     private ParserGameList parser = new ParserGameList();
     private List<OnlineGame> results;
     private InputStream inputStream;
-    private ArrayList<OnlineGame> expectedGames;
+    ArrayList<OnlineGame> expectedList;
 
     @Test
     public void test_parse_does_not_throw_exception() {
@@ -40,19 +41,19 @@ public class TestParserGameList {
     }
 
     @Test
-    public void test_parser_returns_expected_games() {
+    public void test_expected_games_returned() {
         try {
             results = parser.parse(inputStream);
-            ArrayList<OnlineGame> resultGames = new ArrayList<>(results);
-            assertEquals("Lists were not the same size", expectedGames.size(), resultGames.size());
-            boolean sameList = true;
-            for (int i = 0; i < expectedGames.size(); i++) {
-                if (!(expectedGames.get(i).equals(resultGames.get(i)))) {
-                    sameList = false;
+            assertEquals(results.size(), expectedList.size());
+            boolean allEqual = true;
+            int numberOfBadGames = 0;
+            for (int i = 0; i < results.size(); i++) {
+                if (!results.get(i).equals(expectedList.get(i))) {
+                    allEqual = false;
+                    numberOfBadGames++;
                 }
             }
-            assertTrue("List of online games did not match", sameList);
-
+            assertTrue(numberOfBadGames + " games were not the same", allEqual);
         } catch (XmlPullParserException e) {
             assertTrue("Parser threw XmlPullParserException", false);
         } catch (IOException e) {
@@ -62,18 +63,7 @@ public class TestParserGameList {
 
     @Before
     public void setup() {
-        expectedGames = new ArrayList<>();
-        expectedGames.add(new OnlineGame(173346, "7 Wonders Duel", 2015));
-        expectedGames.add(new OnlineGame(202976, "7 Wonders Duel: Pantheon", 2016));
-        expectedGames.add(new OnlineGame(196339, "7 Wonders Duel: Statue of Liberty", 2016));
-        expectedGames.add(new OnlineGame(228690, "7 Wonders Duel: Stonehenge", 2017));
-        expectedGames.add(new OnlineGame(186069, "7 Wonders Duel: The Messe Essen", 2015));
-        expectedGames.add(new OnlineGame(202976, "7 Wonders Duel: Pantheon", 2016));
-        expectedGames.add(new OnlineGame(196339, "7 Wonders Duel: Statue of Liberty", 2016));
-        expectedGames.add(new OnlineGame(228690, "7 Wonders Duel: Stonehenge", 2017));
-        expectedGames.add(new OnlineGame(186069, "7 Wonders Duel: The Messe Essen", 2015));
-
-        String input = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<items total=\"9\" termsofuse=\"http://boardgamegeek.com/xmlapi/termsofuse\">\n" +
                 "    <item type=\"boardgame\" id=\"173346\">\n" +
                 "        <name type=\"primary\" value=\"7 Wonders Duel\"/>\n" +
@@ -112,6 +102,12 @@ public class TestParserGameList {
                 "        <yearpublished value=\"2015\" />\n" +
                 "    </item>\n" +
                 "</items>";
-        inputStream = new ByteArrayInputStream(input.getBytes());
+        inputStream = new ByteArrayInputStream(xml.getBytes());
+        expectedList = new ArrayList<>();
+        expectedList.add(new OnlineGame(173346, "7 Wonders Duel", 2015));
+        expectedList.add(new OnlineGame(202976, "7 Wonders Duel: Pantheon", 2016));
+        expectedList.add(new OnlineGame(196339, "7 Wonders Duel: Statue of Liberty", 2016));
+        expectedList.add(new OnlineGame(228690, "7 Wonders Duel: Stonehenge", 2017));
+        expectedList.add(new OnlineGame(186069, "7 Wonders Duel: The Messe Essen", 2015));
     }
 }
