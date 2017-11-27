@@ -26,7 +26,7 @@ public class FindGameByID extends AsyncTask<Integer, Void, Game> {
     /**
      * AsyncTask doInBackground method
      * @param params List of Integers. Only first is used to hold id passed in exexute method.
-     * @return Game returns the bame found through api call or null if no game was found
+     * @return Game returns the game found through api call or null if no game was found
      */
     @Override
     protected Game doInBackground(Integer... params) {
