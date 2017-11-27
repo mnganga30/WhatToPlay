@@ -40,16 +40,30 @@ public class ViewGame extends AppCompatActivity {
             final TextView year =  (TextView)findViewById(R.id.searchedYear);
             final TextView description= (TextView) findViewById(R.id.searchedDescription);
             final TextView age = (TextView) findViewById(R.id.searchedAge);
-            final TextView numPlayers = (TextView) findViewById(R.id.searchedPlayTime);
+            final TextView numPlayers = (TextView) findViewById(R.id.searchedNumOfPlayers);
+            final TextView playTime = (TextView) findViewById(R.id.searchedPlayTime);
             ImageView image = (ImageView) findViewById(R.id.searchedImage);
 
             Game selected = dbHelper.getGameByID(id);
 
             name.setText(selected.getName());
-            year.setText("[" + Integer.toString(selected.getYear()) + "]");
+
+            if (selected.getYear() != 0000) {
+                year.setText("[" + Integer.toString(selected.getYear()) + "]");
+            }else {year.setText("");}
+
             description.setText(selected.getDescription());
-            age.setText("Recommended Age: " + selected.getMinPlayerAge());
+
+            if (selected.getMinPlayerAge() != 0) {
+                age.setText("Recommended Age: " + selected.getMinPlayerAge());
+            }else{age.setText("Recommend Age: NAN");}
+
+            if (selected.getPlayTime() != 0) {
+                playTime.setText("Play Time: " + selected.getPlayTime());
+            }else{ playTime.setText("Play Time: NaN");}
+
             numPlayers.setText("Number of Players " + selected.getMinPlayers()  + " - "+ selected.getMaxPlayers());
+
             try {
                 image.setImageBitmap(new DownloadImage().execute(selected.getThumbnail()).get());
             } catch (InterruptedException e) {
