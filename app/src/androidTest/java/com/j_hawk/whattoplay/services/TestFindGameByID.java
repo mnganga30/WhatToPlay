@@ -63,12 +63,22 @@ public class TestFindGameByID  {
     }
 
     @Test
-    public void testFindGameById() throws Throwable{
+    public void testFoundValidGame() throws Throwable{
 
         testTask = new FindGameByID();
         testGame = testTask.execute(68448).get();
 
         assertEquals("Game from API did not mtach expected game", expectedGame, testGame);
+
+    }
+
+    @Test
+    public void testNoValidGame() throws Throwable{
+
+        testTask = new FindGameByID();
+        testGame = testTask.execute(-1).get();
+
+        assertEquals("Game from API did not mtach expected game", null, testGame);
 
     }
 
