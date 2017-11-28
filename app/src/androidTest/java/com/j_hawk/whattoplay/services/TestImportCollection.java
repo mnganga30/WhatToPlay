@@ -57,7 +57,7 @@ public class TestImportCollection {
     }
 
     @Test
-    public void testReturneGamesSize() {
+    public void testReturnGamesSize() {
         assertEquals(NUM_OF_GAMES, testGames.size());
     }
 
