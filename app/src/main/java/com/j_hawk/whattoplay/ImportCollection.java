@@ -28,11 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-
-/**
- * Created by kevin on 10/30/2017.
- */
-
 /**
  * This page is the activity for importing a collection from BoardGameGeek.com
  * @author Kevin, Simon, Jian, Martin
@@ -41,7 +36,6 @@ import java.util.concurrent.ExecutionException;
 public class ImportCollection extends AppCompatActivity {
 
     private DBHelper dbHelper;
-    private Toast statusMessage;
     private EditText username;
     private Button importCollection;
     private TextView progressText;
@@ -60,7 +54,6 @@ public class ImportCollection extends AppCompatActivity {
         setContentView(R.layout.import_collection);
 
         dbHelper = new DBHelper(getApplicationContext());
-        statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         gamesAdded = new ArrayList<>();
         username = (EditText)findViewById(R.id.bggUserNameEdTxt);
         importCollection = (Button)findViewById(R.id.importButton);

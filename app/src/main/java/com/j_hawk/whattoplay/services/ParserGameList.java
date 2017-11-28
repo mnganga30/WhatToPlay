@@ -58,7 +58,7 @@ public class ParserGameList {
                 }
                 String name = parser.getName();
                 // Starts by looking for the entry tag
-                if (name.equals("item")) {
+                if (name.equals("item") && parser.getAttributeValue(null, "type").equals("boardgame")) {
                     entries.add(readEntry(parser));
                 } else {
                     skip(parser);

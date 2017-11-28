@@ -1,7 +1,6 @@
 package com.j_hawk.whattoplay;
 
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,7 +44,6 @@ import java.util.concurrent.ExecutionException;
 
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_CLASS_TEXT;
-import static com.j_hawk.whattoplay.R.id.container;
 
 /**
  * This page is the activity for navigating the home screen. Includes main menu and Game Search screen.
@@ -298,6 +296,14 @@ public class HomePageActivity extends AppCompatActivity {
             lySearch = (ListView) rootView.findViewById(R.id.searchingresult);
             ImageButton search = (ImageButton) rootView.findViewById(R.id.searchbutton);
             final EditText input = (EditText) rootView.findViewById(R.id.editText);
+            Button filter = (Button) rootView.findViewById(R.id.filter);
+            filter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent mIntent = new Intent(getContext(), filterpage.class);
+                    startActivity(mIntent);
+                }
+            });
             Spinner spinner = (Spinner) rootView.findViewById(R.id.searchmode);
             ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                     R.array.mode, android.R.layout.simple_spinner_item);
@@ -362,8 +368,13 @@ public class HomePageActivity extends AppCompatActivity {
             lySearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    // Item currentItem = adapter.getItem(position);
+                     Game currentItem = msItemAdapter.getItem(position);
                     // (...)
+
+                    Intent intent = new Intent(getContext(), ViewGame.class);
+                    intent.putExtra("Id", currentItem.getId());
+
+                    startActivity(intent);
                 }
             });
         }
@@ -375,6 +386,11 @@ public class HomePageActivity extends AppCompatActivity {
                 for(int i = 0; i < s1.length(); i++){
                     if(s1.charAt(i) != s2.charAt(i)){return false;}
                 }return true;}}
+
+
+
+
+
         }
 
     /**
@@ -549,8 +565,8 @@ public class HomePageActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int i) {
-            return null;
+        public Game getItem(int i) {
+            return mitem.get(i);
         }
 
         @Override
