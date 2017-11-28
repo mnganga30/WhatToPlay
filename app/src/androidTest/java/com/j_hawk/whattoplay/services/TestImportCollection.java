@@ -53,6 +53,7 @@ public class TestImportCollection {
 
     @After
     public void teardown() {
+        dbHelper.rebuildDatabase();
         dbHelper.close();
     }
 
