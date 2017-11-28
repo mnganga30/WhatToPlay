@@ -24,9 +24,9 @@ public class TestFindGameByID  {
     @Rule
     public ActivityTestRule<AddToCollection> findGameByIdRule = new ActivityTestRule<>(AddToCollection.class, false, false);
 
-    Game expectedGame;
-    Game testGame;
-    FindGameByID testTask;
+    private Game expectedGame;
+    private Game testGame;
+    private FindGameByID testTask;
 
     @Before
     public void setup() {

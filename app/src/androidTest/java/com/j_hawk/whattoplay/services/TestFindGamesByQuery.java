@@ -27,9 +27,9 @@ public class TestFindGamesByQuery {
     @Rule
     public ActivityTestRule<AddToCollection> findGameByQuerydRule = new ActivityTestRule<>(AddToCollection.class, false, false);
 
-    ArrayList<OnlineGame> expectedGames;
-    ArrayList<OnlineGame> testGames;
-    FindGamesByQuery testTask;
+    private ArrayList<OnlineGame> expectedGames;
+    private ArrayList<OnlineGame> testGames;
+    private FindGamesByQuery testTask;
 
     @Before
     public void setup() {

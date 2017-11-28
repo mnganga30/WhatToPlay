@@ -25,8 +25,8 @@ public class TestFindHotItems {
     @Rule
     public ActivityTestRule<HomePageActivity> findGameByQuerydRule = new ActivityTestRule<>(HomePageActivity.class, false, false);
 
-    ArrayList<OnlineGame> testGames;
-    FindHotItems testTask;
+    private ArrayList<OnlineGame> testGames;
+    private FindHotItems testTask;
 
     @Before
     public void setup() {

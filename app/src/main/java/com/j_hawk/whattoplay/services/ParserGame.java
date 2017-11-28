@@ -113,6 +113,7 @@ public class ParserGame {
                 parser.next();
                 description = parser.getText();
                 description = description.replaceAll("&#10;", "\n");
+                description = description.replaceAll("&rsquo;", "'");
                 parser.nextTag();
             } else if (name.equals("link")) {
                 if (parser.getAttributeValue(null, "type").equals("boardgamecategory")) {
