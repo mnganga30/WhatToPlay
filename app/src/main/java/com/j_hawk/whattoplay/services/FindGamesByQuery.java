@@ -12,10 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kevin on 10/30/2017.
- */
-
-/**
  * FindGamesByQuery.java
  * @author Kevin, Simon, Jian, Martin
  * @version 1.0

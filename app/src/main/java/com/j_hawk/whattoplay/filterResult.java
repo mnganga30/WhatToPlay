@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -21,20 +22,40 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import static java.security.AccessController.getContext;
+
 public class filterResult extends AppCompatActivity {
-    private ItemAdapter myAdapter;
+    private HomePageActivity.ItemAdapter myAdapter;
     private ArrayList<Game> resultList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle it = this.getIntent().getExtras();
+       final Bundle it = this.getIntent().getExtras();
         resultList = (ArrayList<Game>) it.getSerializable("resultList");
         setContentView(R.layout.activity_filter_result);
         LayoutInflater myinflater = getLayoutInflater();
-        myAdapter = new ItemAdapter(myinflater, (ArrayList<Game>) resultList);
+        myAdapter = new HomePageActivity.ItemAdapter(myinflater, (ArrayList<Game>) resultList);
         ListView resultlv = (ListView) findViewById(R.id.filterResult);
         resultlv.setAdapter(myAdapter);
-    }
+
+
+
+
+
+
+            resultlv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Game currentItem = myAdapter.getItem(position);
+                    // (...)
+
+                    Intent intent = new Intent(getApplicationContext(), ViewGame.class);
+                    intent.putExtra("Id", currentItem.getId());
+
+                    startActivity(intent);
+                }
+            });
+        }
     public class ItemAdapter extends BaseAdapter {
         private ArrayList<Game> mitem;
         private LayoutInflater minflater;
@@ -76,8 +97,8 @@ public class filterResult extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int i) {
-            return null;
+        public Game getItem(int i) {
+            return mitem.get(i);
         }
 
         @Override
