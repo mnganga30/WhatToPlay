@@ -1,19 +1,23 @@
 package com.j_hawk.whattoplay;
 
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.BottomNavigationView;
+import android.support.test.filters.LargeTest;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,28 +35,41 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.j_hawk.whattoplay.HomePageActivity;
 import com.j_hawk.whattoplay.data.DBHelper;
 import com.j_hawk.whattoplay.data.Game;
 import com.j_hawk.whattoplay.data.OnlineGame;
 import com.j_hawk.whattoplay.services.FindGameByID;
 import com.j_hawk.whattoplay.services.FindHotItems;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static android.text.InputType.TYPE_CLASS_NUMBER;
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static org.junit.Assert.*;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static android.text.InputType.TYPE_CLASS_NUMBER;
-import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
-/**
- * This page is the activity for navigating the home screen. Includes main menu and Game Search screen.
- * @author Kevin, Simon, Jian, Martin
- * @version 1.0
- */
-public class HomePageActivity extends AppCompatActivity {
+@RunWith(AndroidJUnit4.class)
+@LargeTest
+public class HomePageActivityTest {
 
+    @Rule
+    public ActivityTestRule<HomePageActivity> myhomepageactivity = new ActivityTestRule<>(HomePageActivity.class, false, false);
 
+    private HomePageActivity homepageActivity;
     private PersonalInfoPagerAdapter myPersonalInfoPagerAdapter;
     private static SearchPagerAdapter mySearchPagerAdapter;
     private HomePagerAdapter myHomePagerAdapter;
@@ -62,72 +79,7 @@ public class HomePageActivity extends AppCompatActivity {
     private static final String HOME_FRAG = "HomePage";
     private static final String PERSONAL_FRAG = "PersonalPage";
     private static BottomNavigationView navigation;
-    private Toast statusMessage;
 
-
-
-    /**
-     * Overrides back button functionality. Navigates back to Home screen instead of closing app.
-     */
-    @Override
-    public void onBackPressed() {
-        if (fragmentDisplayed == null) {
-            super.onBackPressed();
-        } else if (fragmentDisplayed.equals(SEARCH_FRAG) || fragmentDisplayed.equals(HOME_FRAG)) {
-            mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter(myPersonalInfoPagerAdapter);
-            fragmentDisplayed = PERSONAL_FRAG;
-            navigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
-        } else if (fragmentDisplayed.equals(PERSONAL_FRAG)) {
-            super.onBackPressed();
-        }
-    }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_recommendations:
-                    mViewPager = (ViewPager) findViewById(R.id.pager);
-                    mViewPager.setAdapter(myHomePagerAdapter);
-                    fragmentDisplayed = HOME_FRAG;
-                    return true;
-                case R.id.navigation_search:
-                    mViewPager = (ViewPager) findViewById(R.id.pager);
-                    mViewPager.setAdapter(mySearchPagerAdapter);
-                    fragmentDisplayed = SEARCH_FRAG;
-                    return true;
-                case R.id.navigation_home:
-                    mViewPager = (ViewPager) findViewById(R.id.pager);
-                    mViewPager.setAdapter(myPersonalInfoPagerAdapter);
-                    fragmentDisplayed = PERSONAL_FRAG;
-                    return true;
-            }
-            return false;
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_page);
-        statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-        navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mySearchPagerAdapter =
-                new SearchPagerAdapter(getSupportFragmentManager());
-        myPersonalInfoPagerAdapter =
-                new PersonalInfoPagerAdapter(getSupportFragmentManager());
-        myHomePagerAdapter =
-                new HomePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(myPersonalInfoPagerAdapter);
-    }
-    /**
-     * FragmentStatePagerAdapter for PersonalInfoPager
-     */
     public static class PersonalInfoPagerAdapter extends FragmentStatePagerAdapter {
 
         public PersonalInfoPagerAdapter(FragmentManager fm) {
@@ -136,9 +88,9 @@ public class HomePageActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int i) {
-            Fragment fragment = new PersonalInfoFragment();
+            Fragment fragment = new HomePageActivity.PersonalInfoFragment();
             Bundle args = new Bundle();
-            args.putInt(PersonalInfoFragment.ARG_OBJECT, i + 1);
+            args.putInt(HomePageActivity.PersonalInfoFragment.ARG_OBJECT, i + 1);
             fragment.setArguments(args);
             return fragment;
         }
@@ -260,9 +212,9 @@ public class HomePageActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int i) {
-            Fragment fragment = new SearchFragment();
+            Fragment fragment = new HomePageActivity.SearchFragment();
             Bundle args = new Bundle();
-            args.putInt(SearchFragment.ARG_OBJECT, i + 1);
+            args.putInt(HomePageActivity.SearchFragment.ARG_OBJECT, i + 1);
             fragment.setArguments(args);
             return fragment;
         }
@@ -284,7 +236,7 @@ public class HomePageActivity extends AppCompatActivity {
     public static class SearchFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
         private final List<Game> list = new ArrayList<>();
-        private ItemAdapter msItemAdapter;
+        private HomePageActivity.ItemAdapter msItemAdapter;
         private ListView lySearch = null;
         private DBHelper dbHelper;
         @Override
@@ -319,22 +271,22 @@ public class HomePageActivity extends AppCompatActivity {
                             if (checkName(games.get(i).getName(), input.getText().toString())) {
                                 Game result = games.get(i);
                                 list.add(result);
-                                msItemAdapter = new ItemAdapter(inflater, list);
+                                msItemAdapter = new HomePageActivity.ItemAdapter(inflater, list);
                                 lySearch.setAdapter(msItemAdapter);
                             }
                         }
                     } else {
                         if(!input.getText().toString().isEmpty()){
-                        for (int i = 0; i < games.size(); i++) {
-                            if (games.get(i).getMinPlayers() <= Integer.parseInt(input.getText().toString()) &&
-                                    games.get(i).getMaxPlayers() >= Integer.parseInt(input.getText().toString())) {
-                                Game result = games.get(i);
-                                list.add(result);
+                            for (int i = 0; i < games.size(); i++) {
+                                if (games.get(i).getMinPlayers() <= Integer.parseInt(input.getText().toString()) &&
+                                        games.get(i).getMaxPlayers() >= Integer.parseInt(input.getText().toString())) {
+                                    Game result = games.get(i);
+                                    list.add(result);
+                                }
                             }
-                        }
-                        msItemAdapter = new ItemAdapter(inflater, list);
-                        lySearch.setAdapter(msItemAdapter);
-                    }}
+                            msItemAdapter = new HomePageActivity.ItemAdapter(inflater, list);
+                            lySearch.setAdapter(msItemAdapter);
+                        }}
                 }
             });
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -368,7 +320,7 @@ public class HomePageActivity extends AppCompatActivity {
             lySearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                     Game currentItem = msItemAdapter.getItem(position);
+                    Game currentItem = msItemAdapter.getItem(position);
                     // (...)
 
                     Intent intent = new Intent(getContext(), ViewGame.class);
@@ -391,7 +343,7 @@ public class HomePageActivity extends AppCompatActivity {
 
 
 
-        }
+    }
 
     /**
      * FragmentStatePagerAdapter for HomePager
@@ -405,14 +357,14 @@ public class HomePageActivity extends AppCompatActivity {
         public Fragment getItem(int i) {
             Fragment fragment = null;
             try {
-                fragment = new HomepageFragment();
+                fragment = new HomePageActivity.HomepageFragment();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             Bundle args = new Bundle();
-            args.putInt(HomepageFragment.ARG_OBJECT, i + 1);
+            args.putInt(HomePageActivity.HomepageFragment.ARG_OBJECT, i + 1);
             fragment.setArguments(args);
             return fragment;
         }
@@ -434,7 +386,7 @@ public class HomePageActivity extends AppCompatActivity {
     public static class HomepageFragment extends Fragment {
         public static final String ARG_OBJECT = "object";
         private final List<OnlineGame> list = new FindHotItems().execute().get();
-        private ItemAdapter2 mItemAdapter;
+        private HomePageActivity.ItemAdapter2 mItemAdapter;
         private ListView lyHome = null;
         private DBHelper dbHelper;
         private Toast statusMessage;
@@ -454,7 +406,7 @@ public class HomePageActivity extends AppCompatActivity {
             //            int id, String name, int minPlayers, int maxPlayers, int year, int playTime
             View rootView = inflater.inflate(
                     R.layout.homepage_dailyrecommand, container, false);
-            mItemAdapter = new ItemAdapter2(inflater, list);
+            mItemAdapter = new HomePageActivity.ItemAdapter2(inflater, list);
             lyHome = (ListView) rootView.findViewById(R.id.recommlist);
             Bundle args = getArguments();
             return rootView;
@@ -469,7 +421,7 @@ public class HomePageActivity extends AppCompatActivity {
             lyHome.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                  final OnlineGame currentItem = mItemAdapter.getItem(position);
+                    final OnlineGame currentItem = mItemAdapter.getItem(position);
                     // (...)
 
                     dialog.setTitle("Add "+ currentItem.getName()+" To Collection")
@@ -589,7 +541,7 @@ public class HomePageActivity extends AppCompatActivity {
             max.setText("Max Play: " + Integer.toString(item.getMaxPlayers()));
             year.setText("[" + Integer.toString(item.getYear()) + "]");
             if(item.getPlayTime() == 0){
-            time.setText("Not Sure Game time");
+                time.setText("Not Sure Game time");
             }else{time.setText(Integer.toString(item.getPlayTime()) + " mins");}
             try {
                 image.setImageBitmap(new DownloadImage().execute(item.getThumbnail()).get());
@@ -686,9 +638,37 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+    @Before
+    public void setup() {
+        myhomepageactivity.launchActivity(new Intent());
+        homepageActivity = myhomepageactivity.getActivity();
+        onView(withId(R.id.navigation)).perform(click());
+    }
 
+        @Test
+        public void testBottomNavigationViewSwitch() throws Throwable {
+            onView(withId(R.id.navigation_search)).perform(click());
+            onView(withId(R.id.navigation_home)).perform(click());
+            onView(withId(R.id.navigation_recommendations)).perform(click());
+        }
 
+        @Test
+        public void testFragement1() throws Throwable {
+            onView(withId(R.id.toolbar2)).perform(click());
+        }
 
+        @Test
+        public void testFragement2() throws Throwable {
+            onView(withId(R.id.navigation_recommendations)).perform(click());
+        }
+
+        @Test
+        public void testFragement3() throws Throwable {
+          onView(withId(R.id.pager)).perform(click());
+        }
+    @After
+    public void teardown() {
+        homepageActivity.finish();
+    }
 }
-
 
