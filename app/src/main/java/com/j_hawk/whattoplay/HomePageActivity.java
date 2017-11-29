@@ -67,6 +67,7 @@ public class HomePageActivity extends AppCompatActivity {
     private Toast statusMessage;
 
 
+
     /**
      * Overrides back button functionality. Navigates back to Home screen instead of closing app.
      */
@@ -126,7 +127,6 @@ public class HomePageActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(myPersonalInfoPagerAdapter);
     }
-
     /**
      * FragmentStatePagerAdapter for PersonalInfoPager
      */
