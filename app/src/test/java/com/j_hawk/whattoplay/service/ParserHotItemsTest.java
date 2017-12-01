@@ -1,8 +1,11 @@
 package com.j_hawk.whattoplay.service;
 
+import android.util.Log;
+
 import com.j_hawk.whattoplay.BuildConfig;
 import com.j_hawk.whattoplay.data.OnlineGame;
 import com.j_hawk.whattoplay.services.ParserGameList;
+import com.j_hawk.whattoplay.services.ParserHotItems;
 
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -24,10 +27,10 @@ import static org.junit.Assert.assertTrue;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ParserHotItemsTest {
 
-    private ParserGameList parser = new ParserGameList();
+    private ParserHotItems parser = new ParserHotItems();
     private List<OnlineGame> results;
     private InputStream inputStream;
-    ArrayList<OnlineGame> expectedList;
+    private ArrayList<OnlineGame> expectedList;
 
     @Test
     public void test_parse_does_not_throw_exception() {
@@ -51,6 +54,8 @@ public class ParserHotItemsTest {
                 if (!results.get(i).equals(expectedList.get(i))) {
                     allEqual = false;
                     numberOfBadGames++;
+                    Log.d("ParserHotItemsTest", "Test Game:\n" + results.get(i).toString() + "\n");
+                    Log.d("ParserHotItemsTest",  "did not match:\n" + expectedList.get(i).toString());
                 }
             }
             assertTrue(numberOfBadGames + " games were not the same", allEqual);
@@ -89,13 +94,14 @@ public class ParserHotItemsTest {
                 "        <thumbnail value=\"https://cf.geekdo-images.com/images/pic3728149_t.jpg\"/>\n" +
                 "        <name value=\"Fallout\"/>\n" +
                 "        <yearpublished value=\"2017\" />\n" +
-                "    </item>";
+                "    </item>\n" +
+                "</items>";
         inputStream = new ByteArrayInputStream(xml.getBytes());
         expectedList = new ArrayList<>();
-        expectedList.add(new OnlineGame(174430, "Gloomhaven", 2017));
-        expectedList.add(new OnlineGame(233247, "Sid Meier&#039;s Civilization: A New Dawn", 2017));
-        expectedList.add(new OnlineGame(234669, "Legacy of Dragonholt", 2017));
-        expectedList.add(new OnlineGame(230802, "Azul", 2017));
-        expectedList.add(new OnlineGame(232918, "Fallout", 2017));
+        expectedList.add(new OnlineGame(174430, "Gloomhaven", 2017, "https://cf.geekdo-images.com/images/pic2437871_t.jpg"));
+        expectedList.add(new OnlineGame(233247, "Sid Meier's Civilization: A New Dawn", 2017, "https://cf.geekdo-images.com/images/pic3764168_t.jpg"));
+        expectedList.add(new OnlineGame(234669, "Legacy of Dragonholt", 2017, "https://cf.geekdo-images.com/images/pic3754388_t.jpg"));
+        expectedList.add(new OnlineGame(230802, "Azul", 2017, "https://cf.geekdo-images.com/images/pic3718275_t.jpg"));
+        expectedList.add(new OnlineGame(232918, "Fallout", 2017, "https://cf.geekdo-images.com/images/pic3728149_t.jpg"));
     }
 }
