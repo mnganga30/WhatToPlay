@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_recommendations"
-        android:icon="@drawable/ic_sentiment_very_dissatisfied_black_24dp"
+        android:icon="@drawable/ic_thumb_up_black_24dp"
         android:title="@string/title_recommendations" />
 
 </menu>

@@ -8,9 +8,9 @@
         android:id="@+id/textbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Daily Recommandation:"
-        android:textSize="30dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+        android:text="Hot List: Top 50 Games"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textSize="30dp" />
 
     <ListView
         android:id="@+id/recommlist"
