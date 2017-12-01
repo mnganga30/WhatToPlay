@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 import com.j_hawk.whattoplay.data.DBHelper;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 
 public class filterpage extends AppCompatActivity {
 
+    private Toast statusMessage;
     private DBHelper dbHelper;
     private ArrayList<String> mechanicslist;
     private ArrayList<String> categorieslist;
@@ -38,6 +40,7 @@ public class filterpage extends AppCompatActivity {
         final ArrayList<String> mechanics =  dbHelper.getAllMechanics();
         final ArrayList<String> categories = dbHelper.getAllCategories();
 
+        statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mechanicslist = new ArrayList<String>();
         categorieslist = new ArrayList<String>();
         LayoutInflater Minflater = getLayoutInflater();
@@ -95,19 +98,30 @@ public class filterpage extends AppCompatActivity {
         searchGO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Game> gamefilter = dbHelper.getGamesByFilter(Integer.parseInt(numberofplayer.getSelectedItem().toString()),
-                                                                        numberRecomm.isChecked(),time.getSelectedItem().toString(),
-                                                                    Integer.parseInt(age.getSelectedItem().toString()),ageRecomm.isChecked(),
+                Integer numPlayers = null;
+                if (!numberofplayer.getSelectedItem().toString().equals("None")) numPlayers = Integer.parseInt(numberofplayer.getSelectedItem().toString());
+                String playTime = null;
+                if (!time.getSelectedItem().toString().equals("None")) time.getSelectedItem().toString();
+                Integer playerAge = null;
+                if (!age.getSelectedItem().toString().equals("None")) playerAge = Integer.parseInt(age.getSelectedItem().toString());
+                ArrayList<Game> gamefilter = dbHelper.getGamesByFilter(numPlayers, numberRecomm.isChecked(),playTime,
+                                                                    playerAge,ageRecomm.isChecked(),
                                                                     mechanicslist,categorieslist);
-                for(int i = 0; i < gamefilter.size(); i++){
-                    Log.i("game",gamefilter.get(i).toString());
+                if (gamefilter != null) {
+                    for(int i = 0; i < gamefilter.size(); i++){
+                        Log.i("game",gamefilter.get(i).toString());
+                    }
+                    Intent intent = new Intent();
+                    intent.setClass(filterpage.this, filterResult.class);
+                    intent.putExtra("resultList",(Serializable) gamefilter);
+                    startActivity(intent);
+                    gamefilter.clear();
+                    finish();
+                } else {
+                    statusMessage.setText("At least one of the filter must be used");
+                    statusMessage.show();
                 }
-                Intent intent = new Intent();
-                intent.setClass(filterpage.this, filterResult.class);
-                intent.putExtra("resultList",(Serializable) gamefilter);
-                startActivity(intent);
-                gamefilter.clear();
-                finish();
+
             }
         });
 
