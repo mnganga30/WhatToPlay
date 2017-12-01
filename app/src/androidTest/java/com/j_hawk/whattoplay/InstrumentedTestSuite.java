@@ -12,5 +12,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({TestFindGameByID.class, TestFindHotItems.class,
-        TestSvcImportCollection.class, TestFindGamesByQuery.class, TestImportCollection.class})
+        TestSvcImportCollection.class, TestFindGamesByQuery.class, TestImportCollection.class,
+        HomePageActivity.class})
 public class InstrumentedTestSuite {}
