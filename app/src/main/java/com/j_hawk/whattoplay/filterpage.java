@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -32,20 +33,47 @@ public class filterpage extends AppCompatActivity {
     private DBHelper dbHelper;
     private ArrayList<String> mechanicslist;
     private ArrayList<String> categorieslist;
+    private ScrollView scrollView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.localsearching);
         dbHelper = new DBHelper(getApplicationContext());
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+        scrollView.setFocusableInTouchMode(true);
+        scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+
         final ArrayList<String> mechanics =  dbHelper.getAllMechanics();
         final ArrayList<String> categories = dbHelper.getAllCategories();
 
         statusMessage = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        Context context = getBaseContext();
+        final Spinner numberofplayer = (Spinner) findViewById(R.id.numberofplayer);
+        ArrayAdapter<CharSequence> adapter_players = ArrayAdapter.createFromResource(context,
+                R.array.number, android.R.layout.simple_spinner_item);
+        adapter_players.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        numberofplayer.setAdapter(adapter_players);
+
+        final Spinner age = (Spinner) findViewById(R.id.age);
+        ArrayAdapter<CharSequence> adapter_age = ArrayAdapter.createFromResource(context,
+                R.array.age, android.R.layout.simple_spinner_item);
+        adapter_age.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        age.setAdapter(adapter_age);
+
+        final Spinner time = (Spinner) findViewById(R.id.time);
+        ArrayAdapter<CharSequence> adapter_time = ArrayAdapter.createFromResource(context,
+                R.array.time, android.R.layout.simple_spinner_item);
+        adapter_time.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        time.setAdapter(adapter_time);
+
+        final CheckBox numberRecomm = (CheckBox) findViewById(R.id.numberrecomm);
+        final CheckBox ageRecomm = (CheckBox) findViewById(R.id.agerecomm);
+
         mechanicslist = new ArrayList<String>();
         categorieslist = new ArrayList<String>();
         LayoutInflater Minflater = getLayoutInflater();
         LayoutInflater Cinflater = getLayoutInflater();
-        Context context = getBaseContext();
+
         MechanicsItemAdapter myMitemadapter = new MechanicsItemAdapter(Minflater,mechanics);
         CategoriesItemAdapter myCitemadepter = new CategoriesItemAdapter(Cinflater,categories);
         ListView mechanlv = (ListView) findViewById(R.id.machenics);
@@ -74,27 +102,6 @@ public class filterpage extends AppCompatActivity {
         mechanlv.setAdapter(myMitemadapter);
         Button searchGO = (Button) findViewById(R.id.start);
 
-        final Spinner numberofplayer = (Spinner) findViewById(R.id.numberofplayer);
-        ArrayAdapter<CharSequence> adapter_players = ArrayAdapter.createFromResource(context,
-                R.array.number, android.R.layout.simple_spinner_item);
-        adapter_players.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        numberofplayer.setAdapter(adapter_players);
-
-        final Spinner age = (Spinner) findViewById(R.id.age);
-        ArrayAdapter<CharSequence> adapter_age = ArrayAdapter.createFromResource(context,
-                R.array.age, android.R.layout.simple_spinner_item);
-        adapter_age.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        age.setAdapter(adapter_age);
-
-        final Spinner time = (Spinner) findViewById(R.id.time);
-        ArrayAdapter<CharSequence> adapter_time = ArrayAdapter.createFromResource(context,
-                R.array.time, android.R.layout.simple_spinner_item);
-        adapter_time.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        time.setAdapter(adapter_time);
-
-        final CheckBox numberRecomm = (CheckBox) findViewById(R.id.numberrecomm);
-        final CheckBox ageRecomm = (CheckBox) findViewById(R.id.agerecomm);
-
         searchGO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,15 +115,21 @@ public class filterpage extends AppCompatActivity {
                                                                     playerAge,ageRecomm.isChecked(),
                                                                     mechanicslist,categorieslist);
                 if (gamefilter != null) {
-                    for(int i = 0; i < gamefilter.size(); i++){
-                        Log.i("game",gamefilter.get(i).toString());
+                    if (gamefilter.size() > 0) {
+                        for(int i = 0; i < gamefilter.size(); i++){
+                            Log.i("game",gamefilter.get(i).toString());
+                        }
+                        Intent intent = new Intent();
+                        intent.setClass(filterpage.this, filterResult.class);
+                        intent.putExtra("resultList",(Serializable) gamefilter);
+                        startActivity(intent);
+                        gamefilter.clear();
+                        finish();
+                    } else {
+                        statusMessage.setText("Search criteria too narrow\nNo games were found");
+                        statusMessage.show();
                     }
-                    Intent intent = new Intent();
-                    intent.setClass(filterpage.this, filterResult.class);
-                    intent.putExtra("resultList",(Serializable) gamefilter);
-                    startActivity(intent);
-                    gamefilter.clear();
-                    finish();
+
                 } else {
                     statusMessage.setText("At least one of the filter must be used");
                     statusMessage.show();

@@ -7,9 +7,10 @@
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="395dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="55dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,7 +32,7 @@
                     android:layout_height="31dp"
                     android:layout_marginEnd="118dp"
                     android:layout_marginRight="118dp"
-                    android:text="Use BGG Player recommended"
+                    android:text=" Use BGG Player recommended"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/numberofplayer" />
 
@@ -44,7 +45,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="193dp"
-                    android:text="Use BGG Player recommended"
+                    android:text=" Use BGG Player recommended"
                     app:layout_constraintHorizontal_bias="0.008"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -52,13 +53,14 @@
 
                 <Spinner
                     android:id="@+id/numberofplayer"
-                    android:layout_width="100dp"
-                    android:layout_height="25dp"
+                    android:layout_width="120dp"
+                    android:layout_height="27dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="5dp"
+                    android:focusable="true"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintLeft_toRightOf="@+id/numberofplayer"
                     app:layout_constraintRight_toRightOf="parent"
@@ -69,13 +71,14 @@
                     android:layout_width="120dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="185dp"
-                    android:layout_marginRight="157dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="185dp"
                     android:layout_marginTop="161dp"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginLeft="8dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0" />
+                    android:layout_marginStart="8dp" />
 
                 <Spinner
                     android:id="@+id/time"
@@ -155,7 +158,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="10dp"
-                android:text="               Category"
+                android:text="               Categories"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <ListView
@@ -163,14 +166,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <Button
-                android:id="@+id/start"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GO >>"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="281dp" />
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="166dp"
+        android:layout_height="51dp"
+        android:layout_marginLeft="109dp"
+        android:layout_marginTop="0dp"
+        android:text="Search"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView" />
 
 </android.support.constraint.ConstraintLayout>
