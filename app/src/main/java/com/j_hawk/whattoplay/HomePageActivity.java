@@ -313,11 +313,6 @@ public class HomePageActivity extends AppCompatActivity {
                     startActivity(mIntent);
                 }
             });
-            Spinner spinner = (Spinner) rootView.findViewById(R.id.searchmode);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                    R.array.mode, android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
             search.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) { // need to clear game list after all this be show or brfore next searching
@@ -344,27 +339,6 @@ public class HomePageActivity extends AppCompatActivity {
                         msItemAdapter = new ItemAdapter(inflater, list);
                         lySearch.setAdapter(msItemAdapter);
                     }}
-                }
-            });
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    // Two different modes
-                    //search by name
-                    if (position == 1) {
-                        input.setText("");
-                        input.setInputType(TYPE_CLASS_TEXT);
-                    }
-                    //search by number of players
-                    if (position == 0) {
-                        input.setText("");
-                        input.setInputType(TYPE_CLASS_NUMBER);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
                 }
             });
             Bundle args = getArguments();

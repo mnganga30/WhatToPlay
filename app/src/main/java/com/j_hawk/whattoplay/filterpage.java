@@ -74,7 +74,7 @@ public class filterpage extends AppCompatActivity {
         mechanlv.setAdapter(myMitemadapter);
         Button searchGO = (Button) findViewById(R.id.start);
 
-        final Spinner numberofplayer = (Spinner) findViewById(R.id.numberofplayer);
+        final Spinner numberofplayer = (Spinner) findViewById(R.id.numberofplayerspinner);
         ArrayAdapter<CharSequence> adapter_players = ArrayAdapter.createFromResource(context,
                 R.array.number, android.R.layout.simple_spinner_item);
         adapter_players.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -51,7 +51,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Spinner
-                    android:id="@+id/numberofplayer"
+                    android:id="@+id/numberofplayerspinner"
                     android:layout_width="100dp"
                     android:layout_height="25dp"
                     android:layout_marginEnd="8dp"
